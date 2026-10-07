@@ -1,4 +1,4 @@
-# Nome do Sistema
+# Controle de Veículos
 
 > Substitua o título acima pelo nome do seu sistema e preencha cada seção deste documento.
 > Este README é o **documento de visão** do projeto (entrega **AVA 1**) e, ao longo do curso,
@@ -6,23 +6,23 @@
 
 | | |
 |---|---|
-| **Aluno(a)** | Seu nome completo |
-| **Turma** | |
-| **Opção escolhida** | Ordens de Serviço · Controle de Estoque · Agendamento de Serviços · Proposta própria |
+| **Aluno(a)** | Vitor Emanuel de Lima Vodinciar |
+| **Turma** | TEC-N-001788/2026 |
+| **Opção escolhida** | Proposta própria |
 | **Versão atual** | 0.1.0 |
 
 ---
 
 ## 1. Visão geral
 
-### 1.1 Problema
+### 1.1 atualmente não temos controle sobre quem está utilizando os veículos da empresa, nem informações precisas sobre quando e por quanto tempo eles foram utilizados. Essa falta de rastreabilidade dificulta a identificação de funcionários que permanecem por tempo excessivo em determinados trajetos, a identificação dos responsáveis por multas recebidas e por danos encontrados nos veículos, além de impedir um acompanhamento adequado do histórico de utilização da frota. Como consequência, a empresa perde eficiência na gestão dos veículos e fica mais exposta a custos
 <!-- Que problema o sistema resolve? Quem sofre com esse problema hoje e como ele é resolvido (planilha, papel, WhatsApp...)? 3 a 5 linhas. -->
 
 ### 1.2 Canvas do projeto
 
 | Bloco | Resposta |
 |---|---|
-| **Usuários** (quem usa o sistema) | |
+| **Usuários** (Todos os funcionários que usam os veículos) | |
 | **Problema** (dor atual) | |
 | **Proposta de valor** (o que melhora com o sistema) | |
 | **Funcionalidades principais** | |
