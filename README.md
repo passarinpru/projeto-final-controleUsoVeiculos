@@ -38,46 +38,77 @@
 
 | ID | Requisito | Nível |
 |---|---|---|
-| RF01 | O sistema deve permitir cadastrar funcionários, veículos, horários e datas | Essencial |
-| RF02 | O sistema precisa armazenar os dados inseridos e disponibiliza-los para consulta| |
-| RF03 | |  |
+| RF01 | O sistema deve permitir cadastrar funcionários e veículos da empresa. | Essencial |
+| RF02 | O sistema deve permitir registrar a utilização de um veículo, informando o funcionário responsável, a data e o horário de saída.| Essencial |
+| RF03 | O sistema deve permitir registrar a data e o horário de retorno do veículo utilizado. | Essencial |
+| RF04 | O sistema deve permitir consultar o histórico de utilização dos veículos, exibindo os funcionários responsáveis, as datas e os horários de saída e retorno. | Essencial |
 
 ### 2.2 Requisitos não funcionais (COMO o sistema deve ser)
 
 | ID | Requisito |
 |---|---|
 | RNF01 | O sistema deve ser acessado pelo navegador (aplicação web). |
-| RNF02 | O sistema deve exigir login e senha; as senhas devem ser armazenadas criptografadas. |
-| RNF03 | |
+| RNF02 | O sistema deve exigir login e senha; |
 
 ### 2.3 Regras de negócio (as REGRAS do negócio que o sistema precisa respeitar)
 
 | ID | Regra |
 |---|---|
-| RN01 | Ex.: Não é permitido registrar uma saída maior que o saldo do produto. |
-| RN02 | |
+| RN01 | Todo registro de utilização deve estar vinculado a um funcionário e a um veículo cadastrados no sistema. |
+| RN02 | O horário de retorno de um veículo não pode ser anterior ao horário de saída da mesma utilização. |
 
 ---
 
 ## 3. Histórias de usuário
 
-Formato: **Como** *[papel]*, **quero** *[ação]*, **para** *[benefício]*.
+HU01 — Cadastro de funcionários e veículos
 
-**HU01 —** Como ..., quero ..., para ...
-- Critério de aceite: ...
-- Critério de aceite: ...
+Como administrador, quero cadastrar funcionários e veículos, para manter os dados necessários para o controle da frota.
 
-**HU02 —** Como ..., quero ..., para ...
-- Critério de aceite: ...
+Critério de aceite: O sistema deve permitir cadastrar funcionários e veículos.
+Critério de aceite: O sistema deve permitir consultar os funcionários e veículos cadastrados.
+
+HU02 — Registro de utilização
+
+Como funcionário, quero registrar a utilização de um veículo, para que a empresa saiba quem está utilizando cada veículo.
+
+Critério de aceite: O sistema deve permitir informar o funcionário, o veículo, a data e o horário de saída.
+Critério de aceite: O sistema deve salvar o registro de utilização com as informações fornecidas.
+
+HU03 — Consulta do histórico
+
+Como administrador, quero consultar o histórico de utilização dos veículos, para identificar os funcionários responsáveis e verificar os períodos de utilização.
+
+Critério de aceite: O sistema deve exibir o funcionário responsável, o veículo, a data e os horários de saída e retorno.
+Critério de aceite: O sistema deve permitir consultar os registros de utilizações anteriores.
 
 ---
+
 
 ## 4. Modelo de dados
 
-<!-- Encontro 2: apague este comentário (as duas linhas) e cole aqui o diagrama de classes
-     em Mermaid (bloco que começa com ```mermaid), conforme o manual do Encontro 2. -->
+```mermaid
+classDiagram
+    class Funcionario {
+        +Long id
+        +String nome
+    }
 
----
+    class Veiculo {
+        +Long id
+        +String modelo
+        +String placa
+    }
+
+    class UtilizacaoVeiculo {
+        +Long id
+        +LocalDateTime dataHoraSaida
+        +LocalDateTime dataHoraRetorno
+    }
+
+    Funcionario "1" --> "0..*" UtilizacaoVeiculo : realiza
+    Veiculo "1" --> "0..*" UtilizacaoVeiculo : utilizado em
+```
 
 ## 5. Como executar
 
