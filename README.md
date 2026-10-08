@@ -38,9 +38,9 @@
 
 | ID | Requisito | Nível |
 |---|---|---|
-| RF01 | Ex.: O sistema deve permitir cadastrar, listar, editar e excluir categorias. | Essencial |
-| RF02 | | |
-| RF03 | | |
+| RF01 | O sistema deve permitir cadastrar funcionários, veículos, horários e datas | Essencial |
+| RF02 | O sistema precisa armazenar os dados inseridos e disponibiliza-los para consulta| |
+| RF03 | |  |
 
 ### 2.2 Requisitos não funcionais (COMO o sistema deve ser)
 
