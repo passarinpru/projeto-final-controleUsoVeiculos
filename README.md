@@ -22,12 +22,12 @@
 
 | Bloco | Resposta |
 |---|---|
-| **Usuários** (Todos os funcionários que usam os veículos) | |
-| **Problema** (dor atual) | |
-| **Proposta de valor** (o que melhora com o sistema) | |
-| **Funcionalidades principais** | |
-| **Informações que o sistema guarda** | |
-| **Indicadores** (o que o gestor quer acompanhar) | |
+| **Usuários** (quem usa o sistema) | Todos os funcionários que usam os veículos |
+| **Problema** (dor atual) | Funcionários demorando tempo de mais em corridas, multas de trânsito sem identificação do infrator|
+| **Proposta de valor** (o que melhora com o sistema) | Com as informações colhidas, será possível identificar e educar o funcionário de acordo com as necessidades |
+| **Funcionalidades principais** | Identificação do funcionário, hora de início do trajeto e hora do final do trajeto |
+| **Informações que o sistema guarda** | Nome do funcionário, horários, veículos |
+| **Indicadores** (o que o gestor quer acompanhar) | Horários e datas que determinados veículos foram usados por determinados funcionários |
 | **Restrições** (prazo, tecnologia, equipe) | Projeto individual · Java 21 · Spring Boot 4 · entrega v1.0 em 11/11 |
 
 ---
