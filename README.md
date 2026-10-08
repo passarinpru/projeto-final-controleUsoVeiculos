@@ -85,6 +85,7 @@ Critério de aceite: O sistema deve permitir consultar os registros de utilizaç
 ---
 
 
+
 ## 4. Modelo de dados
 
 ```mermaid
@@ -98,6 +99,7 @@ classDiagram
         +Long id
         +String modelo
         +String placa
+        +Integer quilometragem
     }
 
     class UtilizacaoVeiculo {
