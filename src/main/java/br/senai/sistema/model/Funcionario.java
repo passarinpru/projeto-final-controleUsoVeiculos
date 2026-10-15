@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class Funcionario {
@@ -12,9 +13,11 @@ public class Funcionario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome;
+    @NotBlank(message = "Informe o nome do funcionário.")
+private String nome;
 
-    private String matricula;
+@NotBlank(message = "Informe a matrícula.")
+private String matricula;
 
     public Funcionario() {
     }

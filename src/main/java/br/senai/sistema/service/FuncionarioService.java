@@ -20,4 +20,17 @@ public class FuncionarioService {
     public List<Funcionario> listarTodos() {
         return funcionarioRepository.findAll(Sort.by("nome"));
     }
+
+    public void salvar(Funcionario funcionario) {
+        funcionarioRepository.save(funcionario);
+    }
+
+    public Funcionario buscarPorId(Long id) {
+        return funcionarioRepository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Funcionário não encontrado."));
+    }
+    public void excluir(Long id) {
+    funcionarioRepository.deleteById(id);
+}
 }

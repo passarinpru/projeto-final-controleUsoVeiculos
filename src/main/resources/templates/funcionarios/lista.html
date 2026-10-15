@@ -6,7 +6,16 @@
 <nav th:replace="~{fragments/layout :: menu}"></nav>
 
 <main class="container py-4">
-    <h1 class="h4 mb-3">Funcionários</h1>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">Funcionários</h1>
+        <a th:href="@{/funcionarios/novo}" class="btn btn-app">
+            Novo funcionário
+        </a>
+    </div>
+
+    <div th:if="${mensagem}" class="alert alert-success">
+        <span th:text="${mensagem}"></span>
+    </div>
 
     <div th:if="${#lists.isEmpty(funcionarios)}"
          class="alert alert-info">
@@ -22,6 +31,7 @@
                         <th>ID</th>
                         <th>Nome</th>
                         <th>Matrícula</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,6 +39,22 @@
                         <td th:text="${funcionario.id}"></td>
                         <td th:text="${funcionario.nome}"></td>
                         <td th:text="${funcionario.matricula}"></td>
+                        <td>
+                            <a th:href="@{/funcionarios/{id}/editar(id=${funcionario.id})}"
+                               class="btn btn-sm btn-outline-secondary">
+                                Editar
+                            </a>
+
+                            <form th:action="@{/funcionarios/{id}/excluir(id=${funcionario.id})}"
+                                  method="post"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Confirma a exclusão deste funcionário?');">
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-danger">
+                                    Excluir
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                 </tbody>
             </table>
