@@ -73,12 +73,23 @@ public class UtilizacaoVeiculoController {
             return "redirect:/utilizacoes/novo";
         }
 
-        service.salvar(utilizacao);
+        try {
 
-        redirectAttributes.addFlashAttribute(
-                "mensagem", "Saída do veículo registrada com sucesso!");
+            service.salvar(utilizacao);
 
-        return "redirect:/utilizacoes";
+            redirectAttributes.addFlashAttribute(
+                    "mensagem",
+                    "Saída do veículo registrada com sucesso!");
+
+            return "redirect:/utilizacoes";
+
+        } catch (IllegalArgumentException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "erro", e.getMessage());
+
+            return "redirect:/utilizacoes/novo";
+        }
     }
 
     @PostMapping("/{id}/devolver")
@@ -89,6 +100,7 @@ public class UtilizacaoVeiculoController {
         UtilizacaoVeiculo utilizacao = service.buscarPorId(id);
 
         if (utilizacao.getDataHoraRetorno() != null) {
+
             redirectAttributes.addFlashAttribute(
                     "erro", "Este veículo já foi devolvido.");
 
@@ -98,17 +110,21 @@ public class UtilizacaoVeiculoController {
         LocalDateTime agora = LocalDateTime.now();
 
         if (agora.isBefore(utilizacao.getDataHoraSaida())) {
+
             redirectAttributes.addFlashAttribute(
-                    "erro", "O retorno não pode ser anterior à saída.");
+                    "erro",
+                    "O retorno não pode ser anterior à saída.");
 
             return "redirect:/utilizacoes";
         }
 
         utilizacao.setDataHoraRetorno(agora);
+
         service.salvar(utilizacao);
 
         redirectAttributes.addFlashAttribute(
-                "mensagem", "Devolução registrada com sucesso!");
+                "mensagem",
+                "Devolução registrada com sucesso!");
 
         return "redirect:/utilizacoes";
     }

@@ -1,21 +1,18 @@
 
 <!DOCTYPE html>
 <html lang="pt-BR"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1">
-
+<head th:replace="~{fragments/layout :: head('Histórico de Utilizações')}">
     <title>Histórico de Utilizações</title>
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 </head>
 
 <body>
-<div class="container mt-4">
+
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+
+<main class="container mt-4">
 
     <h1>Histórico de Utilização dos Veículos</h1>
 
@@ -33,71 +30,87 @@
 
     <a th:href="@{/utilizacoes/novo}"
        class="btn btn-primary mb-3">
+        <i class="bi bi-plus-circle"></i>
         Registrar nova saída
     </a>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Funcionário</th>
-                <th>Veículo</th>
-                <th>Saída</th>
-                <th>Retorno</th>
-                <th>Situação</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Funcionário</th>
+                    <th>Veículo</th>
+                    <th>Saída</th>
+                    <th>Retorno</th>
+                    <th>Situação</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
 
-        <tbody>
-            <tr th:each="uso : ${utilizacoes}">
-                <td th:text="${uso.funcionario.nome}"></td>
+            <tbody>
+                <tr th:each="uso : ${utilizacoes}">
+                    <td th:text="${uso.funcionario.nome}"></td>
 
-                <td th:text="${uso.veiculo.modelo}"></td>
+                    <td th:text="${uso.veiculo.modelo}"></td>
 
-                <td th:text="${#temporals.format(
-                    uso.dataHoraSaida, 'dd/MM/yyyy HH:mm')}">
-                </td>
+                    <td th:text="${#temporals.format(
+                        uso.dataHoraSaida, 'dd/MM/yyyy HH:mm')}">
+                    </td>
 
-                <td th:text="${uso.dataHoraRetorno != null ?
-                    #temporals.format(
-                    uso.dataHoraRetorno, 'dd/MM/yyyy HH:mm')
-                    : '-'}">
-                </td>
+                    <td th:text="${uso.dataHoraRetorno != null ?
+                        #temporals.format(
+                        uso.dataHoraRetorno, 'dd/MM/yyyy HH:mm')
+                        : '-'}">
+                    </td>
 
-                <td th:text="${uso.dataHoraRetorno == null ?
-                    'Em utilização' : 'Devolvido'}">
-                </td>
+                    <td>
+                        <span th:if="${uso.dataHoraRetorno == null}"
+                              class="badge bg-warning text-dark">
+                            Em utilização
+                        </span>
 
-                <td>
-                    <form th:if="${uso.dataHoraRetorno == null}"
-                          th:action="@{/utilizacoes/{id}/devolver(id=${uso.id})}"
-                          method="post">
+                        <span th:if="${uso.dataHoraRetorno != null}"
+                              class="badge bg-success">
+                            Devolvido
+                        </span>
+                    </td>
 
-                        <button type="submit"
-                                class="btn btn-success btn-sm">
-                            Devolver
-                        </button>
-                    </form>
+                    <td>
+                        <form th:if="${uso.dataHoraRetorno == null}"
+                              th:action="@{/utilizacoes/{id}/devolver(id=${uso.id})}"
+                              method="post">
 
-                    <span th:if="${uso.dataHoraRetorno != null}"
-                          class="text-muted">
-                        Finalizado
-                    </span>
-                </td>
-            </tr>
+                            <button type="submit"
+                                    class="btn btn-success btn-sm">
+                                <i class="bi bi-arrow-return-left"></i>
+                                Devolver
+                            </button>
+                        </form>
 
-            <tr th:if="${#lists.isEmpty(utilizacoes)}">
-                <td colspan="6" class="text-center">
-                    Nenhuma utilização registrada.
-                </td>
-            </tr>
-        </tbody>
-    </table>
+                        <span th:if="${uso.dataHoraRetorno != null}"
+                              class="text-muted">
+                            Finalizado
+                        </span>
+                    </td>
+                </tr>
 
-    <a href="/" class="btn btn-secondary">
+                <tr th:if="${#lists.isEmpty(utilizacoes)}">
+                    <td colspan="6" class="text-center">
+                        Nenhuma utilização registrada.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a th:href="@{/}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i>
         Voltar ao início
     </a>
 
-</div>
+</main>
+
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
+
 </body>
 </html>

@@ -2,6 +2,7 @@
 package br.senai.sistema.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,30 @@ public class UtilizacaoVeiculoService {
 
     public UtilizacaoVeiculo salvar(
             UtilizacaoVeiculo utilizacao) {
+
+        if (utilizacao.getDataHoraRetorno() == null) {
+
+            boolean veiculoEmUso = repository.findAll()
+                    .stream()
+                    .anyMatch(uso ->
+                        Objects.equals(
+                            uso.getVeiculo().getId(),
+                            utilizacao.getVeiculo().getId()
+                        )
+                        && uso.getDataHoraRetorno() == null
+                        && !Objects.equals(
+                            uso.getId(),
+                            utilizacao.getId()
+                        )
+                    );
+
+            if (veiculoEmUso) {
+                throw new IllegalArgumentException(
+                    "Este veículo já está em utilização e ainda não foi devolvido."
+                );
+            }
+        }
+
         return repository.save(utilizacao);
     }
 

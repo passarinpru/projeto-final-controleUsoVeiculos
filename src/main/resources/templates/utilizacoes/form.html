@@ -1,60 +1,115 @@
 
 <!DOCTYPE html>
 <html lang="pt-BR"
-      xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments/layout :: head('Registrar Utilização')}">
     <title>Registrar Utilização</title>
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 </head>
+
 <body>
-<div class="container mt-4">
+
+<nav th:replace="~{fragments/layout :: menu}"></nav>
+
+<main class="container mt-4">
 
     <h1>Registrar Utilização de Veículo</h1>
 
-    <form th:action="@{/utilizacoes/salvar}"
-          th:object="${utilizacao}"
-          method="post">
+    <p class="text-muted">
+        Preencha os dados abaixo para registrar a saída de um veículo.
+    </p>
 
-        <div class="mb-3">
-            <label class="form-label">Funcionário</label>
-            <select class="form-select"
-                    th:field="*{funcionario}" required>
-                <option value="">Selecione um funcionário</option>
-                <option th:each="f : ${funcionarios}"
-                        th:value="${f.id}"
-                        th:text="${f.nome}"></option>
-            </select>
+    <div th:if="${erro}"
+         class="alert alert-danger"
+         th:text="${erro}">
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <form th:action="@{/utilizacoes/salvar}"
+                  th:object="${utilizacao}"
+                  method="post">
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-person"></i>
+                        Funcionário
+                    </label>
+
+                    <select class="form-select"
+                            th:field="*{funcionario}"
+                            required>
+
+                        <option value="">
+                            Selecione um funcionário
+                        </option>
+
+                        <option th:each="f : ${funcionarios}"
+                                th:value="${f.id}"
+                                th:text="${f.nome}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-truck"></i>
+                        Veículo
+                    </label>
+
+                    <select class="form-select"
+                            th:field="*{veiculo}"
+                            required>
+
+                        <option value="">
+                            Selecione um veículo
+                        </option>
+
+                        <option th:each="v : ${veiculos}"
+                                th:value="${v.id}"
+                                th:text="${v.modelo + ' - ' + v.placa}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-calendar-event"></i>
+                        Data e hora da saída
+                    </label>
+
+                    <input type="datetime-local"
+                           class="form-control"
+                           th:field="*{dataHoraSaida}"
+                           required>
+                </div>
+
+                <div class="d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i>
+                        Registrar saída
+                    </button>
+
+                    <a th:href="@{/utilizacoes}"
+                       class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i>
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
         </div>
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label">Veículo</label>
-            <select class="form-select"
-                    th:field="*{veiculo}" required>
-                <option value="">Selecione um veículo</option>
-                <option th:each="v : ${veiculos}"
-                        th:value="${v.id}"
-                        th:text="${v.modelo + ' - ' + v.placa}"></option>
-            </select>
-        </div>
+</main>
 
-        <div class="mb-3">
-            <label class="form-label">Data e hora da saída</label>
-            <input type="datetime-local"
-                   class="form-control"
-                   th:field="*{dataHoraSaida}" required>
-        </div>
+<footer th:replace="~{fragments/layout :: rodape}"></footer>
 
-        <button type="submit" class="btn btn-primary">
-            Registrar saída
-        </button>
-
-        <a th:href="@{/utilizacoes}" class="btn btn-secondary">
-            Cancelar
-        </a>
-    </form>
-</div>
 </body>
 </html>
