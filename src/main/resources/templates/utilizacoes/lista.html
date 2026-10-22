@@ -64,19 +64,17 @@
                     </td>
 
                     <td>
-                        <span th:if="${uso.dataHoraRetorno == null}"
-                              class="badge bg-warning text-dark">
-                            Em utilização
-                        </span>
-
-                        <span th:if="${uso.dataHoraRetorno != null}"
-                              class="badge bg-success">
-                            Devolvido
+                        <span th:if="${uso.status != null}"
+                              class="badge"
+                              th:classappend="${'bg-' + uso.status.cor}"
+                              th:text="${uso.status.descricao}">
+                            Situação
                         </span>
                     </td>
 
                     <td>
-                        <form th:if="${uso.dataHoraRetorno == null}"
+                        <form th:if="${uso.status != null
+                                      and uso.status.name() == 'EM_UTILIZACAO'}"
                               th:action="@{/utilizacoes/{id}/devolver(id=${uso.id})}"
                               method="post">
 
@@ -87,7 +85,8 @@
                             </button>
                         </form>
 
-                        <span th:if="${uso.dataHoraRetorno != null}"
+                        <span th:if="${uso.status != null
+                                      and uso.status.name() == 'DEVOLVIDO'}"
                               class="text-muted">
                             Finalizado
                         </span>

@@ -1,6 +1,7 @@
+
 # Controle de Veículos
 
-Documento de visão do projeto — AVA 1.
+Documento de visão do projeto — AVA 1, atualizado com o desenvolvimento da Sprint 2.
 
 | Campo | Informação |
 |---|---|
@@ -15,7 +16,9 @@ Documento de visão do projeto — AVA 1.
 
 ### 1.1 Problema
 
-Atualmente, a empresa não possui controle organizado sobre quem utiliza seus veículos, nem informações precisas sobre quando e por quanto tempo eles foram utilizados. Essa falta de rastreabilidade dificulta a análise de trajetos demorados e a identificação de quem utilizava um veículo no momento de uma multa ou de uma possível ocorrência de dano. Também prejudica o acompanhamento do histórico de utilização da frota. O sistema permitirá registrar e consultar essas informações para apoiar a gestão dos veículos.
+Atualmente, a empresa não possui controle organizado sobre quem utiliza seus veículos, nem informações precisas sobre quando e por quanto tempo eles foram utilizados. Essa falta de rastreabilidade dificulta a análise de trajetos demorados e a identificação de quem utilizava um veículo no momento de uma multa ou de uma possível ocorrência de dano. Também prejudica o acompanhamento do histórico de utilização da frota.
+
+O sistema permitirá registrar e consultar essas informações para apoiar a gestão dos veículos.
 
 ### 1.2 Canvas do projeto
 
@@ -25,7 +28,7 @@ Atualmente, a empresa não possui controle organizado sobre quem utiliza seus ve
 | **Problema** | Falta de registros organizados sobre os responsáveis pelos veículos e os períodos de utilização. |
 | **Proposta de valor** | Facilitar o acompanhamento da frota, a análise dos períodos de utilização e a apuração de ocorrências. |
 | **Funcionalidades principais** | Cadastro de funcionários e veículos, registro de saída e retorno e consulta do histórico de utilização. |
-| **Informações que o sistema guarda** | Nome e matrícula do funcionário; modelo, placa e quilometragem do veículo; funcionário e veículo vinculados à utilização; datas e horários de saída e retorno. |
+| **Informações que o sistema guarda** | Nome e matrícula do funcionário; modelo, placa e quilometragem do veículo; funcionário e veículo vinculados à utilização; datas e horários de saída e retorno; situação da utilização. |
 | **Indicadores** | Quem utilizou cada veículo, datas e horários de utilização e duração das utilizações concluídas. |
 | **Restrições** | Projeto individual · Java 21 · Spring Boot 4 · entrega da versão 1.0 em 11/11/2026. |
 
@@ -55,6 +58,20 @@ Atualmente, a empresa não possui controle organizado sobre quem utiliza seus ve
 |---|---|
 | RN01 | Todo registro de utilização deve estar vinculado a um funcionário e a um veículo cadastrados no sistema. |
 | RN02 | A data e o horário de retorno de um veículo não podem ser anteriores à data e ao horário de saída da mesma utilização. |
+| RN03 | Um veículo não pode possuir mais de uma utilização em aberto simultaneamente. |
+
+### 2.4 Situação da utilização
+
+Cada utilização possui uma situação definida automaticamente pelo sistema.
+
+| Situação | Descrição |
+|---|---|
+| EM_UTILIZACAO | O veículo foi retirado e ainda não possui data e horário de retorno. |
+| DEVOLVIDO | O veículo já possui data e horário de retorno registrados. |
+
+As situações são representadas pelo enum `StatusUtilizacao`, armazenado como texto no banco de dados.
+
+Na listagem, as situações são identificadas por cores e o botão de devolução fica disponível para utilizações em aberto.
 
 ---
 
@@ -73,6 +90,7 @@ Como funcionário, quero registrar a utilização de um veículo, para que a emp
 
 - Critério de aceite: o registro exige um funcionário e um veículo cadastrados, além da data e do horário de saída.
 - Critério de aceite: após salvar, a utilização pode ser consultada com as informações fornecidas.
+- Critério de aceite: o sistema impede uma nova retirada de um veículo que ainda esteja em utilização.
 
 ### HU03 — Consulta do histórico
 
@@ -80,6 +98,7 @@ Como administrador, quero consultar o histórico de utilização dos veículos, 
 
 - Critério de aceite: a consulta exibe o funcionário responsável, o veículo e as datas e os horários de saída e retorno; quando não houver retorno, indica que ele está pendente.
 - Critério de aceite: utilizações anteriores permanecem disponíveis para consulta após o registro do retorno.
+- Critério de aceite: a situação da utilização é exibida com identificação visual na listagem.
 
 ---
 
@@ -104,13 +123,25 @@ classDiagram
         +Long id
         +LocalDateTime dataHoraSaida
         +LocalDateTime dataHoraRetorno
+        +StatusUtilizacao status
+    }
+
+    class StatusUtilizacao {
+        <<enumeration>>
+        EM_UTILIZACAO
+        DEVOLVIDO
     }
 
     Funcionario "1" --> "0..*" UtilizacaoVeiculo : realiza
     Veiculo "1" --> "0..*" UtilizacaoVeiculo : utilizado em
+    UtilizacaoVeiculo --> StatusUtilizacao : possui
 ```
 
-Cada utilização está vinculada a um funcionário e a um veículo. Um funcionário pode realizar várias utilizações, e um veículo pode ter várias utilizações no histórico.
+Cada utilização está vinculada a um funcionário e a um veículo.
+
+Um funcionário pode realizar várias utilizações, e um veículo pode ter várias utilizações no histórico, desde que não possua duas utilizações em aberto simultaneamente.
+
+O campo `status` representa a situação da utilização por meio do enum `StatusUtilizacao`.
 
 ---
 
@@ -122,9 +153,9 @@ Cada utilização está vinculada a um funcionário e a um veículo. Um funcion�
 2. Aguarde a preparação do ambiente.
 3. No terminal, execute:
 
-   ```bash
-   mvn spring-boot:run
-   ```
+```bash
+mvn spring-boot:run
+```
 
 4. Quando aparecer o aviso da porta **8080**, clique em **Abrir no navegador**.
 5. Para parar o sistema, clique no terminal e pressione **Ctrl + C**.
@@ -135,7 +166,7 @@ Requisitos: JDK 21, Maven e uma IDE, como IntelliJ IDEA ou VS Code com o Extensi
 
 1. Abra o projeto na IDE.
 2. Execute a classe `SistemaApplication` ou o comando `mvn spring-boot:run` na pasta do projeto.
-3. Acesse [http://localhost:8080](http://localhost:8080).
+3. Acesse http://localhost:8080.
 
 ### Acesso
 
@@ -154,12 +185,17 @@ O login passa a ser exigido a partir do Encontro 7.
 
 Java 21 · Spring Boot 4 · Spring MVC · Thymeleaf · Bootstrap 5 · Spring Data JPA · H2 (desenvolvimento) · MySQL (produção) · Spring Security · Git/GitHub.
 
+---
+
 ## 7. Uso de inteligência artificial
 
 A preencher pelo aluno conforme as orientações do curso.
+
+---
 
 ## 8. Histórico de versões
 
 | Versão | Data | Descrição |
 |---|---|---|
 | 0.1.0 | A preencher | Projeto inicial criado a partir do repositório modelo e elaboração do documento de visão. |
+```

@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
@@ -38,6 +40,10 @@ public class UtilizacaoVeiculo {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime dataHoraRetorno;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private StatusUtilizacao status;
 
     public UtilizacaoVeiculo() {
     }
@@ -80,5 +86,13 @@ public class UtilizacaoVeiculo {
 
     public void setDataHoraRetorno(LocalDateTime dataHoraRetorno) {
         this.dataHoraRetorno = dataHoraRetorno;
+    }
+
+    public StatusUtilizacao getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusUtilizacao status) {
+        this.status = status;
     }
 }

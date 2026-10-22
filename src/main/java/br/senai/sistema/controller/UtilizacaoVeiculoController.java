@@ -1,8 +1,6 @@
 
 package br.senai.sistema.controller;
 
-import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +14,7 @@ import br.senai.sistema.model.UtilizacaoVeiculo;
 import br.senai.sistema.service.UtilizacaoVeiculoService;
 import br.senai.sistema.service.FuncionarioService;
 import br.senai.sistema.service.VeiculoService;
+import br.senai.sistema.service.RegraNegocioException;
 
 @Controller
 @RequestMapping("/utilizacoes")
@@ -37,6 +36,7 @@ public class UtilizacaoVeiculoController {
 
     @GetMapping
     public String listar(Model model) {
+
         model.addAttribute(
                 "utilizacoes", service.listarTodos());
 
@@ -83,7 +83,7 @@ public class UtilizacaoVeiculoController {
 
             return "redirect:/utilizacoes";
 
-        } catch (IllegalArgumentException e) {
+        } catch (RegraNegocioException e) {
 
             redirectAttributes.addFlashAttribute(
                     "erro", e.getMessage());
@@ -97,34 +97,19 @@ public class UtilizacaoVeiculoController {
             @PathVariable Long id,
             RedirectAttributes redirectAttributes) {
 
-        UtilizacaoVeiculo utilizacao = service.buscarPorId(id);
+        try {
 
-        if (utilizacao.getDataHoraRetorno() != null) {
-
-            redirectAttributes.addFlashAttribute(
-                    "erro", "Este veículo já foi devolvido.");
-
-            return "redirect:/utilizacoes";
-        }
-
-        LocalDateTime agora = LocalDateTime.now();
-
-        if (agora.isBefore(utilizacao.getDataHoraSaida())) {
+            service.devolver(id);
 
             redirectAttributes.addFlashAttribute(
-                    "erro",
-                    "O retorno não pode ser anterior à saída.");
+                    "mensagem",
+                    "Devolução registrada com sucesso!");
 
-            return "redirect:/utilizacoes";
+        } catch (RegraNegocioException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "erro", e.getMessage());
         }
-
-        utilizacao.setDataHoraRetorno(agora);
-
-        service.salvar(utilizacao);
-
-        redirectAttributes.addFlashAttribute(
-                "mensagem",
-                "Devolução registrada com sucesso!");
 
         return "redirect:/utilizacoes";
     }
