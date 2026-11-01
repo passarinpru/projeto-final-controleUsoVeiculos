@@ -1,65 +1,114 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head th:replace="~{fragments/layout :: head('Funcionários')}"></head>
+
 <body>
 
 <nav th:replace="~{fragments/layout :: menu}"></nav>
 
 <main class="container py-4">
+
     <div class="d-flex justify-content-between align-items-center mb-3">
+
         <h1 class="h4 mb-0">Funcionários</h1>
-        <a th:href="@{/funcionarios/novo}" class="btn btn-app">
+
+        <!-- Somente o ADMIN pode cadastrar funcionários -->
+        <a th:href="@{/funcionarios/novo}"
+           class="btn btn-app"
+           sec:authorize="hasRole('ADMIN')">
+            <i class="bi bi-plus-lg"></i>
             Novo funcionário
         </a>
+
     </div>
 
+    <!-- Mensagem de sucesso -->
     <div th:if="${mensagem}" class="alert alert-success">
         <span th:text="${mensagem}"></span>
     </div>
 
+    <!-- Mensagem quando não existem funcionários -->
     <div th:if="${#lists.isEmpty(funcionarios)}"
          class="alert alert-info">
         Nenhum funcionário encontrado.
     </div>
 
+    <!-- Tabela de funcionários -->
     <div class="card shadow-sm"
          th:unless="${#lists.isEmpty(funcionarios)}">
+
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+
+            <table class="table table-hover mb-0 align-middle">
+
                 <thead class="table-light">
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
                         <th>Matrícula</th>
-                        <th>Ações</th>
+
+                        <!-- Coluna visível somente para ADMIN -->
+                        <th class="text-end"
+                            sec:authorize="hasRole('ADMIN')">
+                            Ações
+                        </th>
                     </tr>
                 </thead>
+
                 <tbody>
+
                     <tr th:each="funcionario : ${funcionarios}">
+
                         <td th:text="${funcionario.id}"></td>
+
                         <td th:text="${funcionario.nome}"></td>
+
                         <td th:text="${funcionario.matricula}"></td>
-                        <td>
+
+                        <!-- Botões exclusivos do administrador -->
+                        <td class="text-end text-nowrap"
+                            sec:authorize="hasRole('ADMIN')">
+
+                            <!-- Editar funcionário -->
                             <a th:href="@{/funcionarios/{id}/editar(id=${funcionario.id})}"
                                class="btn btn-sm btn-outline-secondary">
+
+                                <i class="bi bi-pencil"></i>
                                 Editar
+
                             </a>
 
+                            <!-- Excluir funcionário -->
                             <form th:action="@{/funcionarios/{id}/excluir(id=${funcionario.id})}"
                                   method="post"
                                   class="d-inline"
                                   onsubmit="return confirm('Confirma a exclusão deste funcionário?');">
+
                                 <button type="submit"
                                         class="btn btn-sm btn-outline-danger">
+
+                                    <i class="bi bi-trash"></i>
                                     Excluir
+
                                 </button>
+
                             </form>
+
                         </td>
+
                     </tr>
+
                 </tbody>
+
             </table>
+
         </div>
+
     </div>
+
 </main>
 
 <footer th:replace="~{fragments/layout :: rodape}"></footer>

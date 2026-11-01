@@ -1,67 +1,119 @@
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head th:replace="~{fragments/layout :: head('Veículos')}"></head>
+
 <body>
 
 <nav th:replace="~{fragments/layout :: menu}"></nav>
 
 <main class="container py-4">
+
     <div class="d-flex justify-content-between align-items-center mb-3">
+
         <h1 class="h4 mb-0">Veículos</h1>
-        <a th:href="@{/veiculos/novo}" class="btn btn-app">
+
+        <!-- Somente o ADMIN pode cadastrar veículos -->
+        <a th:href="@{/veiculos/novo}"
+           class="btn btn-app"
+           sec:authorize="hasRole('ADMIN')">
+
+            <i class="bi bi-plus-lg"></i>
             Novo veículo
+
         </a>
+
     </div>
 
+    <!-- Mensagem de sucesso -->
     <div th:if="${mensagem}" class="alert alert-success">
         <span th:text="${mensagem}"></span>
     </div>
 
+    <!-- Mensagem quando não existem veículos -->
     <div th:if="${#lists.isEmpty(veiculos)}"
          class="alert alert-info">
         Nenhum veículo encontrado.
     </div>
 
+    <!-- Tabela de veículos -->
     <div class="card shadow-sm"
          th:unless="${#lists.isEmpty(veiculos)}">
+
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+
+            <table class="table table-hover mb-0 align-middle">
+
                 <thead class="table-light">
                     <tr>
                         <th>ID</th>
                         <th>Modelo</th>
                         <th>Placa</th>
                         <th>Quilometragem</th>
-                        <th>Ações</th>
+
+                        <!-- Coluna exclusiva do administrador -->
+                        <th class="text-end"
+                            sec:authorize="hasRole('ADMIN')">
+                            Ações
+                        </th>
                     </tr>
                 </thead>
+
                 <tbody>
+
                     <tr th:each="veiculo : ${veiculos}">
+
                         <td th:text="${veiculo.id}"></td>
+
                         <td th:text="${veiculo.modelo}"></td>
+
                         <td th:text="${veiculo.placa}"></td>
+
                         <td th:text="${veiculo.quilometragem}"></td>
-                        <td>
+
+                        <!-- Botões exclusivos do administrador -->
+                        <td class="text-end text-nowrap"
+                            sec:authorize="hasRole('ADMIN')">
+
+                            <!-- Editar veículo -->
                             <a th:href="@{/veiculos/{id}/editar(id=${veiculo.id})}"
                                class="btn btn-sm btn-outline-secondary">
+
+                                <i class="bi bi-pencil"></i>
                                 Editar
+
                             </a>
 
+                            <!-- Excluir veículo -->
                             <form th:action="@{/veiculos/{id}/excluir(id=${veiculo.id})}"
                                   method="post"
                                   class="d-inline"
                                   onsubmit="return confirm('Confirma a exclusão deste veículo?');">
+
                                 <button type="submit"
                                         class="btn btn-sm btn-outline-danger">
+
+                                    <i class="bi bi-trash"></i>
                                     Excluir
+
                                 </button>
+
                             </form>
+
                         </td>
+
                     </tr>
+
                 </tbody>
+
             </table>
+
         </div>
+
     </div>
+
 </main>
 
 <footer th:replace="~{fragments/layout :: rodape}"></footer>

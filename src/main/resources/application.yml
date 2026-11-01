@@ -1,17 +1,15 @@
 # =====================================================================
-#  CONFIGURAÇÕES DO SISTEMA (ambiente de DESENVOLVIMENTO)
-#
-#  Formato YAML: a hierarquia é feita pela INDENTAÇÃO (2 espaços).
-#  Nunca use TAB. "app: nome:" equivale a "app.nome".
+# CONFIGURAÇÕES DO SISTEMA - CONTROLE DE VEÍCULOS
+# SENAI - Encontro 07 - Segurança e Perfis de Acesso
 # =====================================================================
 
 app:
-  # Nome do seu sistema: aparece no menu e no título das páginas.
-  # TROQUE para o nome do seu projeto (ex.: "Estoque Fácil", "OS Técnica").
+  # Nome do sistema
   nome: "Controle de Veículos"
+
+  # Segurança ativada a partir do Encontro 07
   seguranca:
-    # Segurança (login). Fica desligada até o Encontro 7.
-    ativa: false
+    ativa: true
 
 server:
   port: 8080
@@ -20,34 +18,27 @@ spring:
   application:
     name: sistema
 
-  # -------------------------------------------------------------------
-  #  Banco de dados de DESENVOLVIMENTO: H2 (embutido, salvo na pasta ./dados)
-  #  MODE=MySQL deixa o H2 parecido com o MySQL, usado em produção.
-  # -------------------------------------------------------------------
+  # Banco de dados H2
   datasource:
     url: "jdbc:h2:file:./dados/banco;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE"
     username: sa
     password: ""
 
+  # Configurações do JPA
   jpa:
     hibernate:
-      # O Hibernate cria/atualiza as tabelas a partir das classes @Entity.
       ddl-auto: update
-    # true = mostra no terminal os comandos SQL executados (bom para aprender)
     show-sql: false
     open-in-view: true
 
-  # Console web do banco: abra /h2-console no navegador
-  #   JDBC URL: copie a mesma "url" do bloco datasource acima (completa)
-  #   Usuário: sa   Senha: (vazia)
+  # Console do banco de dados
   h2:
     console:
       enabled: true
       path: /h2-console
       settings:
-        # Permite abrir o console pelo endereço do Codespaces (apenas desenvolvimento)
         web-allow-others: true
 
-  # Sem cache: alterações nas páginas aparecem ao recarregar o navegador.
+  # Configurações do Thymeleaf
   thymeleaf:
     cache: false

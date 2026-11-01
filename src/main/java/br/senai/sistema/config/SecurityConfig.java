@@ -4,20 +4,34 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
- * Configuração de segurança (login e permissões).
+ * Configuração de segurança do Sistema de Controle de Veículos.
  *
- * ESTADO INICIAL: DESLIGADA. Até o Encontro 7 todas as páginas ficam liberadas,
- * para você se concentrar no desenvolvimento das funcionalidades.
+ * SENAI - Encontro 07
  *
- * Para LIGAR a segurança (Encontro 7), altere em application.yml:
- *     app: seguranca: ativa: true
- * e ajuste as regras do bloco "if (ativa)" para as páginas do seu sistema.
+ * Perfis:
+ *
+ * ADMIN:
+ * - Cadastrar, consultar, editar e excluir funcionários.
+ * - Cadastrar, consultar, editar e excluir veículos.
+ * - Registrar saídas e devoluções.
+ * - Consultar histórico de utilizações.
+ * - Excluir registros de utilização.
+ * - Acessar o console do banco H2.
+ *
+ * OPERADOR:
+ * - Consultar funcionários e veículos.
+ * - Registrar saídas e devoluções.
+ * - Consultar histórico de utilizações.
+ * - Não pode alterar cadastros ou excluir registros.
+ *
+ * As regras são verificadas de cima para baixo.
  */
 @Configuration
 public class SecurityConfig {
@@ -29,36 +43,92 @@ public class SecurityConfig {
     public SecurityFilterChain filtroDeSeguranca(HttpSecurity http) throws Exception {
 
         if (ativa) {
+
             http.authorizeHttpRequests(auth -> auth
-                    // Arquivos públicos e páginas que não exigem login
-                    .requestMatchers("/css/**", "/js/**", "/img/**", "/login", "/diagnostico").permitAll()
-                    .requestMatchers(PathRequest.toH2Console()).permitAll()
-                    // Exemplo de página restrita a um perfil (ajuste no Encontro 7)
-                    .requestMatchers("/usuarios/**").hasRole("ADMIN")
-                    // Todo o resto exige estar logado
-                    .anyRequest().authenticated());
+
+                // Arquivos públicos e tela de login
+                .requestMatchers(
+                    "/css/**",
+                    "/js/**",
+                    "/img/**",
+                    "/login",
+                    "/diagnostico"
+                ).permitAll()
+
+                // Console H2: somente administrador
+                .requestMatchers(PathRequest.toH2Console())
+                .hasRole("ADMIN")
+
+                // Gerenciamento de usuários: somente administrador
+                .requestMatchers("/usuarios/**")
+                .hasRole("ADMIN")
+
+                // Consulta de funcionários: qualquer usuário logado
+                .requestMatchers(HttpMethod.GET, "/funcionarios")
+                .authenticated()
+
+                // Cadastro, edição e exclusão de funcionários
+                .requestMatchers("/funcionarios/**")
+                .hasRole("ADMIN")
+
+                // Consulta de veículos: qualquer usuário logado
+                .requestMatchers(HttpMethod.GET, "/veiculos")
+                .authenticated()
+
+                // Cadastro, edição e exclusão de veículos
+                .requestMatchers("/veiculos/**")
+                .hasRole("ADMIN")
+
+                // Exclusão de utilizações: somente administrador
+                .requestMatchers("/utilizacoes/*/excluir")
+                .hasRole("ADMIN")
+
+                // Utilizações: administrador e operador
+                .requestMatchers("/utilizacoes/**")
+                .hasAnyRole("ADMIN", "OPERADOR")
+
+                // Todas as demais páginas exigem login
+                .anyRequest()
+                .authenticated()
+            );
+
         } else {
-            // Segurança desligada: tudo liberado
-            http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+            // Segurança desligada: acesso liberado
+            http.authorizeHttpRequests(auth ->
+                auth.anyRequest().permitAll()
+            );
         }
 
         http
-            // Página de login personalizada (templates/login.html)
+            // Tela de login personalizada
             .formLogin(form -> form
-                    .loginPage("/login")
-                    .defaultSuccessUrl("/", true)
-                    .permitAll())
+                .loginPage("/login")
+                .defaultSuccessUrl("/", true)
+                .permitAll()
+            )
+
+            // Encerrar sessão
             .logout(logout -> logout
-                    .logoutSuccessUrl("/login?saiu")
-                    .permitAll())
-            // O console do H2 usa recursos que precisam destas duas liberações
-            .csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
-            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+                .logoutSuccessUrl("/login?saiu")
+                .permitAll()
+            )
+
+            // Configurações necessárias para o console H2
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers(PathRequest.toH2Console())
+            )
+
+            .headers(headers -> headers
+                .frameOptions(frame -> frame.sameOrigin())
+            );
 
         return http.build();
     }
 
-    /** Algoritmo usado para criptografar e conferir senhas. */
+    /**
+     * Criptografia das senhas utilizando BCrypt.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
