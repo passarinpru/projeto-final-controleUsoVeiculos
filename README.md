@@ -1,14 +1,16 @@
-
 # Controle de Veículos
 
-Documento de visão do projeto — AVA 1, atualizado com o desenvolvimento da Sprint 2.
+Documento de visão e acompanhamento do projeto — SENAI.
+
+**Projeto atualizado com as funcionalidades da Sprint 3 — Segurança, Login e Perfis de Acesso.**
 
 | Campo | Informação |
 |---|---|
 | **Aluno** | Vitor Emanuel de Lima Vodinciar |
 | **Turma** | TEC-N-001788/2026 |
 | **Opção escolhida** | Proposta própria |
-| **Versão atual** | 0.1.0 |
+| **Versão atual** | 0.3.0 |
+| **Previsão de entrega da versão 1.0** | 11/11/2026 |
 
 ---
 
@@ -16,7 +18,11 @@ Documento de visão do projeto — AVA 1, atualizado com o desenvolvimento da Sp
 
 ### 1.1 Problema
 
-Atualmente, a empresa não possui controle organizado sobre quem utiliza seus veículos, nem informações precisas sobre quando e por quanto tempo eles foram utilizados. Essa falta de rastreabilidade dificulta a análise de trajetos demorados e a identificação de quem utilizava um veículo no momento de uma multa ou de uma possível ocorrência de dano. Também prejudica o acompanhamento do histórico de utilização da frota.
+Atualmente, a empresa não possui controle organizado sobre quem utiliza seus veículos, nem informações precisas sobre quando e por quanto tempo eles foram utilizados.
+
+Essa falta de rastreabilidade dificulta a análise de trajetos demorados e a identificação de quem utilizava um veículo no momento de uma multa ou de uma possível ocorrência de dano.
+
+Também prejudica o acompanhamento do histórico de utilização da frota.
 
 O sistema permitirá registrar e consultar essas informações para apoiar a gestão dos veículos.
 
@@ -24,13 +30,13 @@ O sistema permitirá registrar e consultar essas informações para apoiar a ges
 
 | Bloco | Resposta |
 |---|---|
-| **Usuários** | Funcionários que utilizam os veículos e administradores responsáveis pela frota. |
+| **Usuários** | Funcionários que utilizam os veículos, operadores e administradores responsáveis pela frota. |
 | **Problema** | Falta de registros organizados sobre os responsáveis pelos veículos e os períodos de utilização. |
 | **Proposta de valor** | Facilitar o acompanhamento da frota, a análise dos períodos de utilização e a apuração de ocorrências. |
-| **Funcionalidades principais** | Cadastro de funcionários e veículos, registro de saída e retorno e consulta do histórico de utilização. |
-| **Informações que o sistema guarda** | Nome e matrícula do funcionário; modelo, placa e quilometragem do veículo; funcionário e veículo vinculados à utilização; datas e horários de saída e retorno; situação da utilização. |
-| **Indicadores** | Quem utilizou cada veículo, datas e horários de utilização e duração das utilizações concluídas. |
-| **Restrições** | Projeto individual · Java 21 · Spring Boot 4 · entrega da versão 1.0 em 11/11/2026. |
+| **Funcionalidades principais** | Cadastro de funcionários e veículos, registro de saída e retorno, consulta do histórico e controle de acesso. |
+| **Informações armazenadas** | Funcionários, matrículas, veículos, placas, quilometragem, datas e horários de utilização e situação dos registros. |
+| **Indicadores previstos** | Quem utilizou cada veículo, datas e horários de utilização e duração das utilizações concluídas. |
+| **Restrições** | Projeto individual, Java 21, Spring Boot 4 e entrega da versão 1.0 em 11/11/2026. |
 
 ---
 
@@ -40,25 +46,32 @@ O sistema permitirá registrar e consultar essas informações para apoiar a ges
 
 | ID | Requisito | Nível |
 |---|---|---|
-| RF01 | O sistema deve permitir cadastrar, consultar, editar e excluir funcionários e veículos da empresa, respeitando os vínculos com registros de utilização. | Essencial |
-| RF02 | O sistema deve permitir registrar a utilização de um veículo, informando o funcionário responsável, a data e o horário de saída. | Essencial |
-| RF03 | O sistema deve permitir registrar a data e o horário de retorno do veículo utilizado. | Essencial |
-| RF04 | O sistema deve permitir consultar o histórico de utilização dos veículos, exibindo os funcionários responsáveis, as datas e os horários de saída e retorno. | Essencial |
+| RF01 | Cadastrar, consultar, editar e excluir funcionários e veículos, respeitando os vínculos existentes. | Essencial |
+| RF02 | Registrar a utilização de um veículo, informando funcionário, veículo, data e horário de saída. | Essencial |
+| RF03 | Registrar a data e o horário de retorno do veículo. | Essencial |
+| RF04 | Consultar o histórico de utilização dos veículos. | Essencial |
+| RF05 | Permitir autenticação por usuário e senha. | Essencial |
+| RF06 | Controlar as permissões conforme os perfis ADMIN e OPERADOR. | Essencial |
 
 ### 2.2 Requisitos não funcionais
 
 | ID | Requisito |
 |---|---|
-| RNF01 | O sistema deve ser acessado pelo navegador, como aplicação web. |
-| RNF02 | O sistema deve exigir login e senha, com senhas armazenadas como hashes seguros. |
+| RNF01 | O sistema deve funcionar como aplicação web acessível pelo navegador. |
+| RNF02 | O sistema deve exigir autenticação por login e senha. |
+| RNF03 | As senhas devem ser armazenadas utilizando hashes seguros, com BCrypt. |
+| RNF04 | A interface deve utilizar Thymeleaf e Bootstrap 5. |
 
 ### 2.3 Regras de negócio
 
 | ID | Regra |
 |---|---|
-| RN01 | Todo registro de utilização deve estar vinculado a um funcionário e a um veículo cadastrados no sistema. |
-| RN02 | A data e o horário de retorno de um veículo não podem ser anteriores à data e ao horário de saída da mesma utilização. |
-| RN03 | Um veículo não pode possuir mais de uma utilização em aberto simultaneamente. |
+| RN01 | Toda utilização deve estar vinculada a um funcionário e a um veículo cadastrados. |
+| RN02 | O retorno não pode ocorrer antes da saída. |
+| RN03 | Um veículo não pode possuir duas utilizações em aberto simultaneamente. |
+| RN04 | Somente administradores podem cadastrar, editar e excluir funcionários e veículos. |
+| RN05 | Administradores e operadores podem registrar saídas e devoluções. |
+| RN06 | Usuários sem permissão não podem acessar funcionalidades restritas. |
 
 ### 2.4 Situação da utilização
 
@@ -66,12 +79,12 @@ Cada utilização possui uma situação definida automaticamente pelo sistema.
 
 | Situação | Descrição |
 |---|---|
-| EM_UTILIZACAO | O veículo foi retirado e ainda não possui data e horário de retorno. |
-| DEVOLVIDO | O veículo já possui data e horário de retorno registrados. |
+| EM_UTILIZACAO | O veículo foi retirado e ainda não possui retorno registrado. |
+| DEVOLVIDO | O veículo já possui data e horário de retorno. |
 
 As situações são representadas pelo enum `StatusUtilizacao`, armazenado como texto no banco de dados.
 
-Na listagem, as situações são identificadas por cores e o botão de devolução fica disponível para utilizações em aberto.
+Na listagem, as situações são identificadas por cores, e o botão de devolução fica disponível para utilizações em aberto.
 
 ---
 
@@ -79,26 +92,49 @@ Na listagem, as situações são identificadas por cores e o botão de devoluç�
 
 ### HU01 — Cadastro de funcionários e veículos
 
-Como administrador, quero cadastrar funcionários e veículos, para manter os dados necessários para o controle da frota.
+Como administrador, quero cadastrar funcionários e veículos para manter os dados necessários ao controle da frota.
 
-- Critério de aceite: o sistema permite cadastrar funcionários com nome e matrícula e veículos com modelo, placa e quilometragem.
-- Critério de aceite: os funcionários e veículos cadastrados ficam disponíveis para consulta nas respectivas listagens.
+**Critérios de aceite:**
+
+- Cadastrar funcionários com nome e matrícula.
+- Cadastrar veículos com modelo, placa e quilometragem.
+- Consultar os registros cadastrados.
+- Permitir edição e exclusão conforme as regras de negócio.
 
 ### HU02 — Registro de utilização
 
-Como funcionário, quero registrar a utilização de um veículo, para que a empresa saiba quem está utilizando cada veículo.
+Como operador, quero registrar a utilização de um veículo para identificar quem está utilizando cada veículo da empresa.
 
-- Critério de aceite: o registro exige um funcionário e um veículo cadastrados, além da data e do horário de saída.
-- Critério de aceite: após salvar, a utilização pode ser consultada com as informações fornecidas.
-- Critério de aceite: o sistema impede uma nova retirada de um veículo que ainda esteja em utilização.
+**Critérios de aceite:**
+
+- Selecionar funcionário e veículo cadastrados.
+- Informar data e horário de saída.
+- Impedir a retirada de veículos que já estejam em utilização.
+- Permitir registrar a devolução.
 
 ### HU03 — Consulta do histórico
 
-Como administrador, quero consultar o histórico de utilização dos veículos, para identificar os funcionários responsáveis e verificar os períodos de utilização.
+Como administrador, quero consultar o histórico de utilização dos veículos para identificar os responsáveis e verificar os períodos de utilização.
 
-- Critério de aceite: a consulta exibe o funcionário responsável, o veículo e as datas e os horários de saída e retorno; quando não houver retorno, indica que ele está pendente.
-- Critério de aceite: utilizações anteriores permanecem disponíveis para consulta após o registro do retorno.
-- Critério de aceite: a situação da utilização é exibida com identificação visual na listagem.
+**Critérios de aceite:**
+
+- Exibir funcionário responsável e veículo utilizado.
+- Exibir data e horário de saída.
+- Exibir data e horário de retorno.
+- Identificar utilizações em aberto.
+- Manter registros anteriores disponíveis para consulta.
+
+### HU04 — Controle de acesso
+
+Como administrador, quero controlar o acesso às funcionalidades para impedir alterações não autorizadas.
+
+**Critérios de aceite:**
+
+- Exigir login e senha.
+- Identificar o usuário autenticado.
+- Diferenciar os perfis ADMIN e OPERADOR.
+- Restringir funcionalidades administrativas.
+- Exibir uma página personalizada quando o acesso for negado.
 
 ---
 
@@ -145,57 +181,206 @@ O campo `status` representa a situação da utilização por meio do enum `Statu
 
 ---
 
-## 5. Como executar
+## 5. Segurança e perfis de acesso
 
-### No GitHub Codespaces
+A autenticação foi implementada utilizando Spring Security.
 
-1. No repositório, clique em **Code → Codespaces** e abra o Codespace existente. Caso ainda não tenha um, clique em **Create codespace on main**.
-2. Aguarde a preparação do ambiente.
-3. No terminal, execute:
+O sistema exige login e senha antes de permitir o acesso às funcionalidades protegidas.
+
+### 5.1 Perfis disponíveis
+
+O sistema possui dois perfis:
+
+**ADMIN — Administrador**
+
+Responsável pelo gerenciamento dos cadastros e pelo acompanhamento das utilizações.
+
+**OPERADOR — Operador**
+
+Responsável pelo registro das saídas e devoluções dos veículos e pela consulta das informações cadastradas.
+
+### 5.2 Permissões
+
+| Funcionalidade | ADMIN | OPERADOR |
+|---|---|---|
+| Consultar funcionários | Sim | Sim |
+| Cadastrar funcionários | Sim | Não |
+| Editar funcionários | Sim | Não |
+| Excluir funcionários | Sim | Não |
+| Consultar veículos | Sim | Sim |
+| Cadastrar veículos | Sim | Não |
+| Editar veículos | Sim | Não |
+| Excluir veículos | Sim | Não |
+| Consultar utilizações | Sim | Sim |
+| Registrar saída | Sim | Sim |
+| Registrar devolução | Sim | Sim |
+| Excluir utilização, quando disponível | Sim | Não |
+| Gerenciar usuários, quando disponível | Sim | Não |
+
+### 5.3 Página de acesso negado
+
+Quando um usuário tenta acessar uma funcionalidade sem permissão, o sistema retorna o código HTTP `403 — Forbidden`.
+
+Foi implementada uma página personalizada que apresenta a mensagem:
+
+**Acesso negado**
+
+O seu perfil não tem permissão para acessar esta página ou realizar esta ação.
+
+A página também apresenta um botão para retornar ao início do sistema.
+
+### 5.4 Interface conforme o perfil
+
+O sistema utiliza `sec:authorize` do Thymeleaf para controlar a exibição de elementos da interface.
+
+Os botões de cadastro, edição e exclusão de funcionários e veículos são apresentados somente aos administradores.
+
+O menu também identifica o usuário autenticado e seu perfil.
+
+A ocultação dos botões complementa as regras de autorização configuradas no Spring Security.
+
+---
+
+## 6. Como executar
+
+### 6.1 GitHub Codespaces
+
+1. Abra o repositório no GitHub.
+2. Clique em **Code → Codespaces**.
+3. Abra o Codespace existente ou crie um novo.
+4. Aguarde a preparação do ambiente.
+5. No terminal, execute:
 
 ```bash
 mvn spring-boot:run
 ```
 
-4. Quando aparecer o aviso da porta **8080**, clique em **Abrir no navegador**.
-5. Para parar o sistema, clique no terminal e pressione **Ctrl + C**.
+6. Abra a aplicação pela porta `8080`.
+7. Utilize uma das contas de demonstração.
 
-### No computador
+Para encerrar a aplicação, pressione `Ctrl + C` no terminal.
 
-Requisitos: JDK 21, Maven e uma IDE, como IntelliJ IDEA ou VS Code com o Extension Pack for Java.
+### 6.2 Execução no computador
 
-1. Abra o projeto na IDE.
-2. Execute a classe `SistemaApplication` ou o comando `mvn spring-boot:run` na pasta do projeto.
-3. Acesse http://localhost:8080.
+**Requisitos:**
 
-### Acesso
+- JDK 21.
+- Maven.
+- IntelliJ IDEA ou VS Code com suporte a Java.
 
-Contas de demonstração:
+Abra o projeto na IDE e execute a classe `SistemaApplication` ou utilize:
+
+```bash
+mvn spring-boot:run
+```
+
+A aplicação ficará disponível em `http://localhost:8080`.
+
+### 6.3 Usuários de demonstração
 
 | Usuário | Senha | Perfil |
 |---|---|---|
-| admin | admin123 | Administrador |
-| operador | operador123 | Operador |
+| admin | admin123 | ADMIN |
+| operador | operador123 | OPERADOR |
 
-O login passa a ser exigido a partir do Encontro 7.
+Essas credenciais são destinadas exclusivamente ao ambiente de demonstração e desenvolvimento. Devem ser substituídas antes de qualquer utilização em produção.
+
+### 6.4 Banco de dados
+
+Durante o desenvolvimento, o sistema utiliza H2 com persistência em arquivo.
+
+Configuração principal:
+
+```yaml
+spring:
+  datasource:
+    url: "jdbc:h2:file:./dados/banco;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE"
+    username: sa
+    password: ""
+```
+
+O banco mantém os registros entre as execuções da aplicação.
 
 ---
 
-## 6. Tecnologias
+## 7. Tecnologias
 
-Java 21 · Spring Boot 4 · Spring MVC · Thymeleaf · Bootstrap 5 · Spring Data JPA · H2 (desenvolvimento) · MySQL (produção) · Spring Security · Git/GitHub.
+| Tecnologia | Utilização |
+|---|---|
+| Java 21 | Linguagem de programação |
+| Spring Boot 4 | Estrutura principal da aplicação |
+| Spring MVC | Controllers e requisições web |
+| Spring Data JPA | Persistência de dados |
+| H2 | Banco de dados de desenvolvimento |
+| MySQL | Banco de dados previsto para produção |
+| Thymeleaf | Renderização das páginas |
+| Bootstrap 5 | Interface responsiva |
+| Spring Security | Autenticação e autorização |
+| BCrypt | Hash de senhas |
+| Maven | Gerenciamento de dependências |
+| Git e GitHub | Versionamento do projeto |
 
 ---
 
-## 7. Uso de inteligência artificial
+## 8. Testes realizados
 
-A preencher pelo aluno conforme as orientações do curso.
+### Sprint 2 — Controle de utilizações
+
+- Cadastro e consulta de funcionários.
+- Cadastro e consulta de veículos.
+- Registro de saída de veículos.
+- Registro de devolução.
+- Bloqueio de utilização simultânea do mesmo veículo.
+- Consulta do histórico de utilizações.
+- Identificação visual das situações.
+
+### Sprint 3 — Segurança
+
+- Exibição da tela de login.
+- Autenticação com usuário OPERADOR.
+- Bloqueio do acesso a `/funcionarios/novo` para OPERADOR.
+- Exibição da página personalizada de erro 403.
+- Ocultação dos botões administrativos na lista de funcionários.
+- Ocultação dos botões administrativos na lista de veículos.
+- Exibição do perfil OPERADOR no menu.
+
+**Testes ainda recomendados:**
+
+- Confirmar as funcionalidades administrativas com o perfil ADMIN.
+- Verificar as permissões de alteração por requisições diretas.
+- Confirmar o registro de saída e devolução com o perfil OPERADOR.
 
 ---
 
-## 8. Histórico de versões
+## 9. Uso de inteligência artificial
+
+Durante o desenvolvimento, foi utilizado o ChatGPT como ferramenta de apoio para:
+
+- Compreender conceitos de Java e Spring Boot.
+- Interpretar requisitos do projeto.
+- Auxiliar na implementação de funcionalidades.
+- Identificar e corrigir problemas no código.
+- Compreender as regras de autenticação e autorização.
+- Organizar e atualizar a documentação.
+
+O desenvolvimento foi acompanhado por testes manuais no ambiente GitHub Codespaces.
+
+---
+
+## 10. Histórico de versões
 
 | Versão | Data | Descrição |
 |---|---|---|
-| 0.1.0 | A preencher | Projeto inicial criado a partir do repositório modelo e elaboração do documento de visão. |
-```
+| 0.1.0 | A preencher | Criação do projeto e elaboração do documento de visão. |
+| 0.2.0 | 21/10/2026 | Desenvolvimento dos cadastros, registro de utilizações, devoluções e regras de negócio. |
+| 0.3.0 | 01/11/2026 | Implementação de login, perfis de acesso, página 403 e controle visual de permissões. |
+
+---
+
+## 11. Próximas etapas
+
+- Realizar os testes finais das permissões.
+- Desenvolver o painel de indicadores previsto para o Encontro 08.
+- Atualizar a documentação após a implementação.
+- Preparar as evidências solicitadas no AVA 4.
+- Concluir a versão 1.0 até 11/11/2026.
