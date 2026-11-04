@@ -1,18 +1,22 @@
+
 # =====================================================================
 # CONFIGURAÇÕES DO SISTEMA - CONTROLE DE VEÍCULOS
-# SENAI - Encontro 07 - Segurança e Perfis de Acesso
+# SENAI - Encontro 09 - Estabilização do Sistema
 # =====================================================================
 
 app:
   # Nome do sistema
   nome: "Controle de Veículos"
 
-  # Segurança ativada a partir do Encontro 07
+  # Segurança ativada
   seguranca:
     ativa: true
 
 server:
   port: 8080
+
+  # Corrige os redirecionamentos no GitHub Codespaces
+  forward-headers-strategy: framework
 
 spring:
   application:
