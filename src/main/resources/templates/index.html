@@ -1,64 +1,132 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('Início')}"></head>
+
+<head th:replace="~{fragments/layout :: head('Painel de Indicadores')}"></head>
+
 <body>
+
 <nav th:replace="~{fragments/layout :: menu}"></nav>
 
 <main class="container py-4">
 
-    <!-- Faixa de status: verde se tudo estiver OK, amarela se algo precisar de atenção -->
-    <div class="status-faixa" th:classappend="${tudoOk} ? 'ok' : 'atencao'">
-        <i class="bi" th:classappend="${tudoOk} ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'"></i>
-        <div>
-            <strong th:text="${tudoOk} ? 'Ambiente OK' : 'Ambiente com pendências'">Ambiente OK</strong>
-            <span th:text="${tudoOk} ? 'Seu projeto está rodando. Você está pronto para começar!' : 'Confira os itens marcados abaixo e consulte o manual (Problemas comuns).'">
-                Seu projeto está rodando.
-            </span>
-        </div>
+    <div class="mb-4">
+        <h2 class="fw-bold">
+            <i class="bi bi-speedometer2 me-2"></i>
+            Painel de Indicadores
+        </h2>
+        <p class="text-muted">
+            Acompanhe a utilização dos veículos da empresa.
+        </p>
     </div>
 
-    <div class="row g-4 mt-1">
-        <div class="col-lg-7">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white fw-semibold">
-                    <i class="bi bi-clipboard2-pulse me-1"></i> Diagnóstico do ambiente
-                </div>
-                <table class="table mb-0 align-middle">
-                    <tbody>
-                    <!-- th:each repete a linha para cada item da lista "itens" -->
-                    <tr th:each="item : ${itens}">
-                        <td class="text-muted" style="width: 42%" th:text="${item.nome}">Item</td>
-                        <td th:text="${item.valor}">Valor</td>
-                        <td class="text-end" style="width: 3rem">
-                            <i th:if="${item.ok}" class="bi bi-check-circle-fill text-success"></i>
-                            <i th:unless="${item.ok}" class="bi bi-x-circle-fill text-danger"></i>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <div class="row g-4">
 
-        <div class="col-lg-5">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-white fw-semibold">
-                    <i class="bi bi-signpost-2 me-1"></i> Próximos passos
-                </div>
+        <!-- Total de veículos -->
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm h-100 border-0">
                 <div class="card-body">
-                    <ol class="mb-3">
-                        <li>Altere o <code>nome</code> do sistema em <code>application.yml</code>.</li>
-                        <li>Atualize o <code>README.md</code> com o seu nome e a opção escolhida.</li>
-                        <li>Faça o <em>commit</em> e envie (<em>push</em>) para o GitHub.</li>
-                    </ol>
-                    <a class="btn btn-outline-secondary btn-sm" th:href="@{/h2-console}" target="_blank">
-                        <i class="bi bi-database"></i> Abrir console do banco (H2)
-                    </a>
+                    <div class="text-primary mb-2">
+                        <i class="bi bi-truck fs-2"></i>
+                    </div>
+                    <h6 class="text-muted">
+                        Veículos cadastrados
+                    </h6>
+                    <h2 class="fw-bold"
+                        th:text="${totalVeiculos}">0</h2>
                 </div>
             </div>
         </div>
+
+        <!-- Veículos em utilização -->
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <div class="text-warning mb-2">
+                        <i class="bi bi-car-front-fill fs-2"></i>
+                    </div>
+                    <h6 class="text-muted">
+                        Em utilização
+                    </h6>
+                    <h2 class="fw-bold"
+                        th:text="${emUtilizacao}">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Veículos disponíveis -->
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <div class="text-success mb-2">
+                        <i class="bi bi-check-circle-fill fs-2"></i>
+                    </div>
+                    <h6 class="text-muted">
+                        Veículos disponíveis
+                    </h6>
+                    <h2 class="fw-bold"
+                        th:text="${disponiveis}">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total de utilizações -->
+        <div class="col-md-6 col-xl-3">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <div class="text-info mb-2">
+                        <i class="bi bi-clock-history fs-2"></i>
+                    </div>
+                    <h6 class="text-muted">
+                        Total de utilizações
+                    </h6>
+                    <h2 class="fw-bold"
+                        th:text="${totalUtilizacoes}">0</h2>
+                </div>
+            </div>
+        </div>
+
     </div>
+
+    <!-- Acesso rápido -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-white fw-semibold">
+            <i class="bi bi-lightning-charge me-1"></i>
+            Acesso rápido
+        </div>
+
+        <div class="card-body d-flex flex-wrap gap-2">
+
+            <a th:href="@{/veiculos}"
+               class="btn btn-outline-primary">
+                <i class="bi bi-truck me-1"></i>
+                Ver veículos
+            </a>
+
+            <a th:href="@{/utilizacoes}"
+               class="btn btn-outline-success">
+                <i class="bi bi-clock-history me-1"></i>
+                Ver utilizações
+            </a>
+
+            <a th:href="@{/funcionarios}"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-people me-1"></i>
+                Ver funcionários
+            </a>
+
+            <a th:href="@{/diagnostico}"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-clipboard2-pulse me-1"></i>
+                Diagnóstico
+            </a>
+
+        </div>
+    </div>
+
 </main>
 
 <footer th:replace="~{fragments/layout :: rodape}"></footer>
+
 </body>
 </html>

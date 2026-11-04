@@ -1,52 +1,78 @@
+
 package br.senai.sistema.controller;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import br.senai.sistema.model.UtilizacaoVeiculo;
 import br.senai.sistema.service.DiagnosticoService;
+import br.senai.sistema.service.VeiculoService;
+import br.senai.sistema.service.UtilizacaoVeiculoService;
 
-/**
- * Controller: recebe as requisições do navegador e decide qual página mostrar.
- *
- * @Controller   -> o Spring reconhece esta classe como controller.
- * @GetMapping   -> associa um endereço (rota) a um método.
- * Model        -> "mochila" de dados que vai do Java para a página HTML.
- * return "..." -> nome do arquivo HTML em src/main/resources/templates.
- */
 @Controller
 public class InicioController {
 
     private final DiagnosticoService diagnosticoService;
+    private final VeiculoService veiculoService;
+    private final UtilizacaoVeiculoService utilizacaoService;
 
-    public InicioController(DiagnosticoService diagnosticoService) {
+    public InicioController(
+            DiagnosticoService diagnosticoService,
+            VeiculoService veiculoService,
+            UtilizacaoVeiculoService utilizacaoService) {
+
         this.diagnosticoService = diagnosticoService;
+        this.veiculoService = veiculoService;
+        this.utilizacaoService = utilizacaoService;
     }
 
-    /**
-     * Página inicial. Por enquanto mostra o diagnóstico do ambiente.
-     * Nos próximos encontros ela virará o painel do seu sistema.
-     */
+    // Página inicial com indicadores
     @GetMapping("/")
     public String inicio(Model model) {
-        Map<String, DiagnosticoService.Item> itens = diagnosticoService.verificar();
-        model.addAttribute("itens", itens.values());
-        model.addAttribute("tudoOk", diagnosticoService.tudoOk(itens));
+
+        int totalVeiculos = veiculoService.listarTodos().size();
+
+        List<UtilizacaoVeiculo> utilizacoes =
+                utilizacaoService.listarTodos();
+
+        Set<Long> veiculosEmUso = utilizacoes.stream()
+                .filter(uso -> uso.getDataHoraRetorno() == null)
+                .map(uso -> uso.getVeiculo().getId())
+                .collect(Collectors.toSet());
+
+        int emUtilizacao = veiculosEmUso.size();
+        int disponiveis = totalVeiculos - emUtilizacao;
+        int totalUtilizacoes = utilizacoes.size();
+
+        model.addAttribute("totalVeiculos", totalVeiculos);
+        model.addAttribute("emUtilizacao", emUtilizacao);
+        model.addAttribute("disponiveis", disponiveis);
+        model.addAttribute("totalUtilizacoes", totalUtilizacoes);
+
         return "index";
     }
 
-    /** Página de diagnóstico do ambiente. */
+    // Diagnóstico do ambiente
     @GetMapping("/diagnostico")
     public String diagnostico(Model model) {
-        Map<String, DiagnosticoService.Item> itens = diagnosticoService.verificar();
+
+        Map<String, DiagnosticoService.Item> itens =
+                diagnosticoService.verificar();
+
         model.addAttribute("itens", itens.values());
-        model.addAttribute("tudoOk", diagnosticoService.tudoOk(itens));
+        model.addAttribute("tudoOk",
+                diagnosticoService.tudoOk(itens));
+
         return "diagnostico";
     }
 
-    /** Página de login (usada quando a segurança for ligada). */
+    // Tela de login
     @GetMapping("/login")
     public String login() {
         return "login";
