@@ -1,15 +1,16 @@
+
 # Controle de Veículos
 
 Documento de visão e acompanhamento do projeto — SENAI.
 
-**Projeto atualizado com as funcionalidades da Sprint 3 — Segurança, Login e Perfis de Acesso.**
+**Projeto atualizado com as funcionalidades da Sprint 4 — Painel de Indicadores.**
 
 | Campo | Informação |
 |---|---|
 | **Aluno** | Vitor Emanuel de Lima Vodinciar |
 | **Turma** | TEC-N-001788/2026 |
 | **Opção escolhida** | Proposta própria |
-| **Versão atual** | 0.3.0 |
+| **Versão atual** | 0.4.0 |
 | **Previsão de entrega da versão 1.0** | 11/11/2026 |
 
 ---
@@ -33,9 +34,9 @@ O sistema permitirá registrar e consultar essas informações para apoiar a ges
 | **Usuários** | Funcionários que utilizam os veículos, operadores e administradores responsáveis pela frota. |
 | **Problema** | Falta de registros organizados sobre os responsáveis pelos veículos e os períodos de utilização. |
 | **Proposta de valor** | Facilitar o acompanhamento da frota, a análise dos períodos de utilização e a apuração de ocorrências. |
-| **Funcionalidades principais** | Cadastro de funcionários e veículos, registro de saída e retorno, consulta do histórico e controle de acesso. |
+| **Funcionalidades principais** | Cadastro de funcionários e veículos, registro de saída e retorno, consulta do histórico, controle de acesso e painel de indicadores. |
 | **Informações armazenadas** | Funcionários, matrículas, veículos, placas, quilometragem, datas e horários de utilização e situação dos registros. |
-| **Indicadores previstos** | Quem utilizou cada veículo, datas e horários de utilização e duração das utilizações concluídas. |
+| **Indicadores implementados** | Total de veículos cadastrados, veículos em utilização, veículos disponíveis e total de utilizações registradas. |
 | **Restrições** | Projeto individual, Java 21, Spring Boot 4 e entrega da versão 1.0 em 11/11/2026. |
 
 ---
@@ -52,6 +53,7 @@ O sistema permitirá registrar e consultar essas informações para apoiar a ges
 | RF04 | Consultar o histórico de utilização dos veículos. | Essencial |
 | RF05 | Permitir autenticação por usuário e senha. | Essencial |
 | RF06 | Controlar as permissões conforme os perfis ADMIN e OPERADOR. | Essencial |
+| RF07 | Exibir painel com indicadores de utilização da frota. | Essencial |
 
 ### 2.2 Requisitos não funcionais
 
@@ -72,6 +74,7 @@ O sistema permitirá registrar e consultar essas informações para apoiar a ges
 | RN04 | Somente administradores podem cadastrar, editar e excluir funcionários e veículos. |
 | RN05 | Administradores e operadores podem registrar saídas e devoluções. |
 | RN06 | Usuários sem permissão não podem acessar funcionalidades restritas. |
+| RN07 | O painel deve calcular os veículos disponíveis com base na quantidade cadastrada e nas utilizações em aberto. |
 
 ### 2.4 Situação da utilização
 
@@ -135,6 +138,19 @@ Como administrador, quero controlar o acesso às funcionalidades para impedir al
 - Diferenciar os perfis ADMIN e OPERADOR.
 - Restringir funcionalidades administrativas.
 - Exibir uma página personalizada quando o acesso for negado.
+
+### HU05 — Painel de indicadores
+
+Como administrador ou operador, quero visualizar indicadores sobre os veículos para acompanhar a situação atual da frota.
+
+**Critérios de aceite:**
+
+- Exibir a quantidade total de veículos cadastrados.
+- Exibir a quantidade de veículos em utilização.
+- Exibir a quantidade de veículos disponíveis.
+- Exibir a quantidade total de utilizações registradas.
+- Atualizar os indicadores ao recarregar a página após uma saída ou devolução.
+- Disponibilizar acesso rápido às principais funcionalidades.
 
 ---
 
@@ -216,6 +232,7 @@ Responsável pelo registro das saídas e devoluções dos veículos e pela consu
 | Registrar devolução | Sim | Sim |
 | Excluir utilização, quando disponível | Sim | Não |
 | Gerenciar usuários, quando disponível | Sim | Não |
+| Visualizar painel de indicadores | Sim | Sim |
 
 ### 5.3 Página de acesso negado
 
@@ -241,9 +258,86 @@ A ocultação dos botões complementa as regras de autorização configuradas no
 
 ---
 
-## 6. Como executar
+## 6. Painel de indicadores
 
-### 6.1 GitHub Codespaces
+### 6.1 Objetivo
+
+O painel de indicadores foi desenvolvido no Encontro 8 para facilitar o acompanhamento da frota de veículos.
+
+A página inicial do sistema apresenta informações resumidas e atualizadas com base nos registros existentes no banco de dados.
+
+### 6.2 Indicadores implementados
+
+**1. Veículos cadastrados**
+
+Apresenta a quantidade total de veículos registrados no sistema.
+
+**2. Veículos em utilização**
+
+Apresenta a quantidade de veículos que possuem uma utilização em aberto, sem data de retorno.
+
+**3. Veículos disponíveis**
+
+Apresenta a quantidade de veículos cadastrados que não estão em utilização.
+
+O cálculo é realizado por:
+
+`Disponíveis = Total de veículos - Veículos em utilização`
+
+**4. Total de utilizações**
+
+Apresenta a quantidade total de registros de utilização, incluindo os registros finalizados e aqueles ainda em aberto.
+
+### 6.3 Implementação
+
+O painel utiliza as tecnologias já presentes no projeto:
+
+- Java 21.
+- Spring Boot 4.
+- Spring MVC.
+- Thymeleaf.
+- Bootstrap 5.
+- Spring Data JPA.
+- Banco de dados H2.
+
+O arquivo `InicioController.java` consulta as informações utilizando os serviços existentes.
+
+O `VeiculoService` fornece a lista de veículos cadastrados.
+
+O `UtilizacaoVeiculoService` fornece o histórico de utilizações.
+
+Os veículos em utilização são identificados pelos registros que ainda não possuem data de retorno.
+
+Os valores calculados são enviados para a página `index.html` por meio do `Model` do Spring MVC.
+
+### 6.4 Interface visual
+
+A página inicial apresenta quatro cartões com os indicadores da frota.
+
+Cada cartão possui um ícone, uma descrição e o número correspondente.
+
+O painel também possui uma seção de acesso rápido com os seguintes botões:
+
+- Ver veículos.
+- Ver utilizações.
+- Ver funcionários.
+- Diagnóstico.
+
+O layout utiliza Bootstrap 5 e mantém o menu e o rodapé existentes.
+
+### 6.5 Atualização das informações
+
+Os indicadores são calculados novamente quando a página inicial é acessada ou recarregada.
+
+Após o registro de uma devolução, a quantidade de veículos em utilização diminui e a quantidade de veículos disponíveis aumenta.
+
+O histórico total de utilizações permanece inalterado pela devolução.
+
+---
+
+## 7. Como executar
+
+### 7.1 GitHub Codespaces
 
 1. Abra o repositório no GitHub.
 2. Clique em **Code → Codespaces**.
@@ -252,7 +346,7 @@ A ocultação dos botões complementa as regras de autorização configuradas no
 5. No terminal, execute:
 
 ```bash
-mvn spring-boot:run
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 6. Abra a aplicação pela porta `8080`.
@@ -260,7 +354,7 @@ mvn spring-boot:run
 
 Para encerrar a aplicação, pressione `Ctrl + C` no terminal.
 
-### 6.2 Execução no computador
+### 7.2 Execução no computador
 
 **Requisitos:**
 
@@ -271,12 +365,12 @@ Para encerrar a aplicação, pressione `Ctrl + C` no terminal.
 Abra o projeto na IDE e execute a classe `SistemaApplication` ou utilize:
 
 ```bash
-mvn spring-boot:run
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 A aplicação ficará disponível em `http://localhost:8080`.
 
-### 6.3 Usuários de demonstração
+### 7.3 Usuários de demonstração
 
 | Usuário | Senha | Perfil |
 |---|---|---|
@@ -285,7 +379,7 @@ A aplicação ficará disponível em `http://localhost:8080`.
 
 Essas credenciais são destinadas exclusivamente ao ambiente de demonstração e desenvolvimento. Devem ser substituídas antes de qualquer utilização em produção.
 
-### 6.4 Banco de dados
+### 7.4 Banco de dados
 
 Durante o desenvolvimento, o sistema utiliza H2 com persistência em arquivo.
 
@@ -303,7 +397,7 @@ O banco mantém os registros entre as execuções da aplicação.
 
 ---
 
-## 7. Tecnologias
+## 8. Tecnologias
 
 | Tecnologia | Utilização |
 |---|---|
@@ -322,7 +416,7 @@ O banco mantém os registros entre as execuções da aplicação.
 
 ---
 
-## 8. Testes realizados
+## 9. Testes realizados
 
 ### Sprint 2 — Controle de utilizações
 
@@ -348,11 +442,45 @@ O banco mantém os registros entre as execuções da aplicação.
 
 - Confirmar as funcionalidades administrativas com o perfil ADMIN.
 - Verificar as permissões de alteração por requisições diretas.
-- Confirmar o registro de saída e devolução com o perfil OPERADOR.
+- Confirmar o registro de saída com o perfil OPERADOR.
+
+### Sprint 4 — Painel de indicadores
+
+O painel foi implementado e testado em 04/11/2026.
+
+**Teste inicial:**
+
+| Indicador | Resultado |
+|---|---|
+| Veículos cadastrados | 3 |
+| Veículos em utilização | 2 |
+| Veículos disponíveis | 1 |
+| Total de utilizações | 5 |
+
+**Teste após as devoluções:**
+
+| Indicador | Resultado |
+|---|---|
+| Veículos cadastrados | 3 |
+| Veículos em utilização | 0 |
+| Veículos disponíveis | 3 |
+| Total de utilizações | 5 |
+
+**Resultados:**
+
+- Os indicadores foram exibidos corretamente.
+- As quantidades corresponderam aos registros existentes.
+- O sistema reconheceu as devoluções.
+- A quantidade de veículos disponíveis foi atualizada.
+- O total de utilizações permaneceu correto.
+- O painel funcionou com o perfil OPERADOR.
+- Os botões de acesso rápido foram apresentados na interface.
+
+Os testes confirmaram o funcionamento dos cálculos implementados no painel.
 
 ---
 
-## 9. Uso de inteligência artificial
+## 10. Uso de inteligência artificial
 
 Durante o desenvolvimento, foi utilizado o ChatGPT como ferramenta de apoio para:
 
@@ -362,25 +490,53 @@ Durante o desenvolvimento, foi utilizado o ChatGPT como ferramenta de apoio para
 - Identificar e corrigir problemas no código.
 - Compreender as regras de autenticação e autorização.
 - Organizar e atualizar a documentação.
+- Auxiliar na construção do painel de indicadores.
+- Interpretar os resultados dos testes.
 
 O desenvolvimento foi acompanhado por testes manuais no ambiente GitHub Codespaces.
 
 ---
 
-## 10. Histórico de versões
+## 11. Histórico de versões
 
 | Versão | Data | Descrição |
 |---|---|---|
 | 0.1.0 | A preencher | Criação do projeto e elaboração do documento de visão. |
 | 0.2.0 | 21/10/2026 | Desenvolvimento dos cadastros, registro de utilizações, devoluções e regras de negócio. |
 | 0.3.0 | 01/11/2026 | Implementação de login, perfis de acesso, página 403 e controle visual de permissões. |
+| 0.4.0 | 04/11/2026 | Implementação do painel de indicadores, interface visual, cálculos da frota e testes de atualização após devoluções. |
 
 ---
 
-## 11. Próximas etapas
+## 12. Próximas etapas
 
-- Realizar os testes finais das permissões.
-- Desenvolver o painel de indicadores previsto para o Encontro 08.
-- Atualizar a documentação após a implementação.
+- Realizar os testes finais das permissões administrativas.
+- Verificar as funcionalidades com os perfis ADMIN e OPERADOR.
 - Preparar as evidências solicitadas no AVA 4.
+- Revisar os requisitos e corrigir eventuais problemas.
+- Preparar a versão final do projeto.
 - Concluir a versão 1.0 até 11/11/2026.
+
+---
+
+## 13. Situação atual do projeto
+
+**Versão:** 0.4.0
+
+**Data da atualização:** 04/11/2026
+
+**Funcionalidades implementadas:**
+
+- Cadastro de funcionários.
+- Cadastro de veículos.
+- Registro de utilização de veículos.
+- Registro de devolução.
+- Histórico de utilizações.
+- Controle de disponibilidade dos veículos.
+- Autenticação por login e senha.
+- Perfis de acesso ADMIN e OPERADOR.
+- Página personalizada de acesso negado.
+- Painel com quatro indicadores da frota.
+- Acesso rápido às funcionalidades principais.
+
+O projeto permanece em desenvolvimento, com entrega da versão 1.0 prevista para 11/11/2026.
