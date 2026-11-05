@@ -32,7 +32,7 @@ public class InicioController {
         this.utilizacaoService = utilizacaoService;
     }
 
-    // Página inicial com indicadores
+    // Página inicial com indicadores e lista de atenção
     @GetMapping("/")
     public String inicio(Model model) {
 
@@ -41,8 +41,15 @@ public class InicioController {
         List<UtilizacaoVeiculo> utilizacoes =
                 utilizacaoService.listarTodos();
 
-        Set<Long> veiculosEmUso = utilizacoes.stream()
+        // Utilizações que ainda não possuem retorno
+        List<UtilizacaoVeiculo> atencao = utilizacoes.stream()
                 .filter(uso -> uso.getDataHoraRetorno() == null)
+                .sorted((a, b) -> a.getDataHoraSaida()
+                        .compareTo(b.getDataHoraSaida()))
+                .collect(Collectors.toList());
+
+        // Identifica os veículos atualmente em utilização
+        Set<Long> veiculosEmUso = atencao.stream()
                 .map(uso -> uso.getVeiculo().getId())
                 .collect(Collectors.toSet());
 
@@ -50,10 +57,14 @@ public class InicioController {
         int disponiveis = totalVeiculos - emUtilizacao;
         int totalUtilizacoes = utilizacoes.size();
 
+        // Indicadores do painel
         model.addAttribute("totalVeiculos", totalVeiculos);
         model.addAttribute("emUtilizacao", emUtilizacao);
         model.addAttribute("disponiveis", disponiveis);
         model.addAttribute("totalUtilizacoes", totalUtilizacoes);
+
+        // Lista de atenção
+        model.addAttribute("atencao", atencao);
 
         return "index";
     }

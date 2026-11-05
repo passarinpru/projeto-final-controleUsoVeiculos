@@ -10,30 +10,37 @@
 
 <main class="container py-4">
 
+    <!-- Título do painel -->
     <div class="mb-4">
         <h2 class="fw-bold">
             <i class="bi bi-speedometer2 me-2"></i>
             Painel de Indicadores
         </h2>
+
         <p class="text-muted">
             Acompanhe a utilização dos veículos da empresa.
         </p>
     </div>
 
+    <!-- Indicadores -->
     <div class="row g-4">
 
         <!-- Total de veículos -->
         <div class="col-md-6 col-xl-3">
             <div class="card shadow-sm h-100 border-0">
                 <div class="card-body">
+
                     <div class="text-primary mb-2">
                         <i class="bi bi-truck fs-2"></i>
                     </div>
+
                     <h6 class="text-muted">
                         Veículos cadastrados
                     </h6>
+
                     <h2 class="fw-bold"
                         th:text="${totalVeiculos}">0</h2>
+
                 </div>
             </div>
         </div>
@@ -42,14 +49,18 @@
         <div class="col-md-6 col-xl-3">
             <div class="card shadow-sm h-100 border-0">
                 <div class="card-body">
+
                     <div class="text-warning mb-2">
                         <i class="bi bi-car-front-fill fs-2"></i>
                     </div>
+
                     <h6 class="text-muted">
                         Em utilização
                     </h6>
+
                     <h2 class="fw-bold"
                         th:text="${emUtilizacao}">0</h2>
+
                 </div>
             </div>
         </div>
@@ -58,14 +69,18 @@
         <div class="col-md-6 col-xl-3">
             <div class="card shadow-sm h-100 border-0">
                 <div class="card-body">
+
                     <div class="text-success mb-2">
                         <i class="bi bi-check-circle-fill fs-2"></i>
                     </div>
+
                     <h6 class="text-muted">
                         Veículos disponíveis
                     </h6>
+
                     <h2 class="fw-bold"
                         th:text="${disponiveis}">0</h2>
+
                 </div>
             </div>
         </div>
@@ -74,22 +89,105 @@
         <div class="col-md-6 col-xl-3">
             <div class="card shadow-sm h-100 border-0">
                 <div class="card-body">
+
                     <div class="text-info mb-2">
                         <i class="bi bi-clock-history fs-2"></i>
                     </div>
+
                     <h6 class="text-muted">
                         Total de utilizações
                     </h6>
+
                     <h2 class="fw-bold"
                         th:text="${totalUtilizacoes}">0</h2>
+
                 </div>
             </div>
         </div>
 
     </div>
 
+    <!-- Lista de atenção -->
+    <div class="card shadow-sm mt-4">
+
+        <div class="card-header bg-white fw-semibold">
+            <i class="bi bi-exclamation-triangle text-warning me-1"></i>
+            Lista de atenção — Veículos em utilização
+        </div>
+
+        <!-- Quando não houver veículos em utilização -->
+        <div class="card-body"
+             th:if="${#lists.isEmpty(atencao)}">
+
+            <div class="text-success">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                Nenhum veículo com utilização em aberto.
+            </div>
+
+            <p class="text-muted small mb-0 mt-2">
+                Todos os veículos cadastrados estão disponíveis.
+            </p>
+
+        </div>
+
+        <!-- Quando houver veículos em utilização -->
+        <div class="table-responsive"
+             th:unless="${#lists.isEmpty(atencao)}">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>Funcionário responsável</th>
+                        <th>Veículo</th>
+                        <th>Data e hora da saída</th>
+                        <th>Situação</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr th:each="uso : ${atencao}">
+
+                        <td th:text="${uso.funcionario.nome}">
+                            Funcionário
+                        </td>
+
+                        <td th:text="${uso.veiculo.modelo}">
+                            Veículo
+                        </td>
+
+                        <td th:text="${#temporals.format(
+                            uso.dataHoraSaida,
+                            'dd/MM/yyyy HH:mm')}">
+                            01/01/2026 08:00
+                        </td>
+
+                        <td>
+                            <span class="badge text-bg-warning">
+                                Em utilização
+                            </span>
+                        </td>
+
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="card-footer bg-white">
+            <a th:href="@{/utilizacoes}"
+               class="text-decoration-none small">
+                Ver histórico de utilizações
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+    </div>
+
     <!-- Acesso rápido -->
     <div class="card shadow-sm mt-4">
+
         <div class="card-header bg-white fw-semibold">
             <i class="bi bi-lightning-charge me-1"></i>
             Acesso rápido
