@@ -3,7 +3,7 @@
 
 Documento de visão e acompanhamento do projeto — SENAI.
 
-**Projeto atualizado com as funcionalidades da Sprint 4 — Painel de Indicadores.**
+**Projeto atualizado com as funcionalidades da Sprint 4 — Painel de Indicadores e Lista de Atenção.**
 
 | Campo | Informação |
 |---|---|
@@ -53,7 +53,7 @@ O sistema permitirá registrar e consultar essas informações para apoiar a ges
 | RF04 | Consultar o histórico de utilização dos veículos. | Essencial |
 | RF05 | Permitir autenticação por usuário e senha. | Essencial |
 | RF06 | Controlar as permissões conforme os perfis ADMIN e OPERADOR. | Essencial |
-| RF07 | Exibir painel com indicadores de utilização da frota. | Essencial |
+| RF07 | Exibir painel com indicadores de utilização da frota e lista de atenção das utilizações em aberto. | Essencial |
 
 ### 2.2 Requisitos não funcionais
 
@@ -151,6 +151,7 @@ Como administrador ou operador, quero visualizar indicadores sobre os veículos 
 - Exibir a quantidade total de utilizações registradas.
 - Atualizar os indicadores ao recarregar a página após uma saída ou devolução.
 - Disponibilizar acesso rápido às principais funcionalidades.
+- Exibir uma lista de atenção com utilizações ainda não devolvidas, ordenadas pela saída mais antiga.
 
 ---
 
@@ -264,7 +265,7 @@ A ocultação dos botões complementa as regras de autorização configuradas no
 
 O painel de indicadores foi desenvolvido no Encontro 8 para facilitar o acompanhamento da frota de veículos.
 
-A página inicial do sistema apresenta informações resumidas e atualizadas com base nos registros existentes no banco de dados.
+A página inicial apresenta informações resumidas e atualizadas com base nos registros existentes no banco de dados.
 
 ### 6.2 Indicadores implementados
 
@@ -316,6 +317,19 @@ A página inicial apresenta quatro cartões com os indicadores da frota.
 
 Cada cartão possui um ícone, uma descrição e o número correspondente.
 
+O painel também apresenta a **Lista de Atenção — Veículos em utilização**, mostrando:
+
+- Funcionário responsável.
+- Modelo do veículo.
+- Data e hora da saída.
+- Situação da utilização.
+
+A lista é ordenada pela data de saída, das utilizações mais antigas para as mais recentes.
+
+Quando não houver utilizações em aberto, aparece a mensagem:
+
+**Nenhum veículo com utilização em aberto.**
+
 O painel também possui uma seção de acesso rápido com os seguintes botões:
 
 - Ver veículos.
@@ -333,6 +347,8 @@ Após o registro de uma devolução, a quantidade de veículos em utilização d
 
 O histórico total de utilizações permanece inalterado pela devolução.
 
+A Lista de Atenção é atualizada com base nas utilizações que ainda não possuem retorno registrado.
+
 ---
 
 ## 7. Como executar
@@ -349,8 +365,10 @@ O histórico total de utilizações permanece inalterado pela devolução.
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-6. Abra a aplicação pela porta `8080`.
-7. Utilize uma das contas de demonstração.
+6. Aguarde a mensagem `Started SistemaApplication`.
+7. Abra a aba **Portas**.
+8. Na porta `8080`, clique no ícone de globo para abrir a aplicação.
+9. Utilize uma das contas de demonstração.
 
 Para encerrar a aplicação, pressione `Ctrl + C` no terminal.
 
@@ -395,6 +413,8 @@ spring:
 
 O banco mantém os registros entre as execuções da aplicação.
 
+A pasta `dados/` contém o banco de desenvolvimento e não deve ser enviada ao GitHub.
+
 ---
 
 ## 8. Tecnologias
@@ -433,16 +453,23 @@ O banco mantém os registros entre as execuções da aplicação.
 - Exibição da tela de login.
 - Autenticação com usuário OPERADOR.
 - Bloqueio do acesso a `/funcionarios/novo` para OPERADOR.
+- Bloqueio do acesso a `/veiculos/novo` para OPERADOR.
 - Exibição da página personalizada de erro 403.
 - Ocultação dos botões administrativos na lista de funcionários.
 - Ocultação dos botões administrativos na lista de veículos.
 - Exibição do perfil OPERADOR no menu.
 
-**Testes ainda recomendados:**
+**Testes adicionais realizados no Encontro 9:**
 
-- Confirmar as funcionalidades administrativas com o perfil ADMIN.
-- Verificar as permissões de alteração por requisições diretas.
-- Confirmar o registro de saída com o perfil OPERADOR.
+- Cadastro, edição e exclusão de funcionário de teste.
+- Validação dos campos obrigatórios de funcionário.
+- Cadastro, edição e exclusão de veículo de teste.
+- Validação dos campos obrigatórios de veículo.
+- Registro de saída de veículo.
+- Bloqueio de uma segunda saída do mesmo veículo.
+- Registro de devolução.
+- Atualização dos indicadores após a devolução.
+- Verificação da restrição de acesso do OPERADOR.
 
 ### Sprint 4 — Painel de indicadores
 
@@ -466,15 +493,28 @@ O painel foi implementado e testado em 04/11/2026.
 | Veículos disponíveis | 3 |
 | Total de utilizações | 5 |
 
+**Teste adicional do Encontro 9:**
+
+Após registrar e devolver outro veículo:
+
+| Indicador | Resultado |
+|---|---|
+| Veículos cadastrados | 3 |
+| Veículos em utilização | 0 |
+| Veículos disponíveis | 3 |
+| Total de utilizações | 6 |
+
 **Resultados:**
 
 - Os indicadores foram exibidos corretamente.
 - As quantidades corresponderam aos registros existentes.
 - O sistema reconheceu as devoluções.
 - A quantidade de veículos disponíveis foi atualizada.
-- O total de utilizações permaneceu correto.
+- O total de utilizações permaneceu correto após as devoluções.
 - O painel funcionou com o perfil OPERADOR.
 - Os botões de acesso rápido foram apresentados na interface.
+- A Lista de Atenção foi exibida corretamente quando não havia utilizações em aberto.
+- O bloqueio de uma segunda saída para o mesmo veículo foi testado.
 
 Os testes confirmaram o funcionamento dos cálculos implementados no painel.
 
@@ -504,7 +544,7 @@ O desenvolvimento foi acompanhado por testes manuais no ambiente GitHub Codespac
 | 0.1.0 | A preencher | Criação do projeto e elaboração do documento de visão. |
 | 0.2.0 | 21/10/2026 | Desenvolvimento dos cadastros, registro de utilizações, devoluções e regras de negócio. |
 | 0.3.0 | 01/11/2026 | Implementação de login, perfis de acesso, página 403 e controle visual de permissões. |
-| 0.4.0 | 04/11/2026 | Implementação do painel de indicadores, interface visual, cálculos da frota e testes de atualização após devoluções. |
+| 0.4.0 | 04/11/2026 | Implementação do painel de indicadores, lista de atenção, interface visual e testes de atualização após devoluções. |
 
 ---
 
@@ -512,7 +552,8 @@ O desenvolvimento foi acompanhado por testes manuais no ambiente GitHub Codespac
 
 - Realizar os testes finais das permissões administrativas.
 - Verificar as funcionalidades com os perfis ADMIN e OPERADOR.
-- Preparar as evidências solicitadas no AVA 4.
+- Manter as evidências do AVA 4, já entregue, disponíveis na pasta `docs`.
+- Completar o checklist do AVA 5 e atualizar o Kanban.
 - Revisar os requisitos e corrigir eventuais problemas.
 - Preparar a versão final do projeto.
 - Concluir a versão 1.0 até 11/11/2026.
@@ -537,6 +578,75 @@ O desenvolvimento foi acompanhado por testes manuais no ambiente GitHub Codespac
 - Perfis de acesso ADMIN e OPERADOR.
 - Página personalizada de acesso negado.
 - Painel com quatro indicadores da frota.
+- Lista de Atenção com utilizações em aberto.
 - Acesso rápido às funcionalidades principais.
 
 O projeto permanece em desenvolvimento, com entrega da versão 1.0 prevista para 11/11/2026.
+
+---
+
+## 14. Funcionalidades e telas
+
+### 14.1 Funcionalidades principais
+
+- Cadastro, consulta, edição e exclusão de funcionários e veículos, conforme o perfil.
+- Registro de saída e devolução de veículos.
+- Histórico de utilizações, com funcionário, veículo, datas, horários e situação.
+- Bloqueio de duas utilizações simultâneas do mesmo veículo.
+- Login, autorização por perfil e página de acesso negado (HTTP 403).
+- Painel com quatro indicadores e Lista de Atenção para utilizações sem retorno.
+
+### 14.2 Capturas de tela
+
+**Painel de indicadores e Lista de Atenção**
+
+![Painel de indicadores do Controle de Veículos](docs/painel.png)
+
+**Histórico de utilizações**
+
+![Histórico das utilizações de veículos](docs/utilizacoes.png)
+
+**Tela de login**
+
+![Tela de login do Controle de Veículos](docs/login.png)
+
+**Diferença entre os perfis — Funcionários**
+
+![Permissões ADMIN e OPERADOR na lista de funcionários](docs/perfis%20funcionarios.png)
+
+**Diferença entre os perfis — Veículos**
+
+![Permissões ADMIN e OPERADOR na lista de veículos](docs/perfis%20veiculos.png)
+
+**Regra de negócio — bloqueio de utilização duplicada**
+
+A regra RN03 foi testada: uma segunda saída para um veículo ainda não devolvido é impedida.
+
+A captura `docs/regra.png` deverá ser adicionada à documentação quando for produzida. Não há link para essa imagem por enquanto para evitar imagem quebrada no GitHub.
+
+---
+
+## 15. Checklist do nível essencial — AVA 5
+
+Marque `[x]` apenas quando o item tiver sido verificado. Itens pendentes permanecem com `[ ]`.
+
+- [x] Sistema inicia pelo Codespaces, sem erros nos testes realizados.
+- [x] Cadastro de funcionários: listar, cadastrar, editar, excluir e validar campos obrigatórios.
+- [x] Cadastro de veículos: listar, cadastrar, editar, excluir e validar campos obrigatórios.
+- [x] Utilizações vinculadas a funcionários e veículos cadastrados.
+- [x] Regra RN03: impedir duas utilizações em aberto para o mesmo veículo.
+- [x] Registro de devolução e atualização da disponibilidade.
+- [x] Login e dois perfis com permissões diferentes.
+- [x] Operador bloqueado ao acessar diretamente a página de cadastro restrita (HTTP 403).
+- [x] Painel com quatro indicadores, calculados com dados do sistema.
+- [x] Lista de Atenção exibida no painel.
+- [x] Histórico de commits no GitHub.
+- [x] README com visão do projeto, instruções de execução, usuários de demonstração, funcionalidades e capturas de tela.
+- [ ] Testar explicitamente a RN02: impedir devolução com data anterior à saída.
+- [ ] Confirmar a regra RN01 e as restrições de exclusão de registros vinculados.
+- [ ] Conferir se todas as imagens aparecem corretamente no README publicado no GitHub.
+- [ ] Realizar revisão de usabilidade por um colega e registrar observações.
+- [ ] Atualizar e conferir o Kanban no GitHub Projects.
+- [ ] Verificar se a tag `base-essencial` foi criada e enviada ao GitHub.
+
+**Próxima entrega:** AVA 5 até o início do Encontro 10, em 11/11/2026, com link do repositório, README completo, checklist e Kanban atualizado.
