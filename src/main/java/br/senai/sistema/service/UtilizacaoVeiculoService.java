@@ -123,7 +123,18 @@ public class UtilizacaoVeiculoService {
         salvar(utilizacao);
     }
 
+    // Exclui somente utilizações que ainda não foram devolvidas.
+    @Transactional
     public void excluir(Long id) {
-        repository.deleteById(id);
+
+        UtilizacaoVeiculo utilizacao = buscarPorId(id);
+
+        // Preserva o histórico de utilizações finalizadas.
+        if (utilizacao.getDataHoraRetorno() != null) {
+            throw new RegraNegocioException(
+                "Não é permitido excluir uma utilização já finalizada.");
+        }
+
+        repository.delete(utilizacao);
     }
 }

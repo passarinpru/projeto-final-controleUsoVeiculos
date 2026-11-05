@@ -18,6 +18,7 @@
 
     <p>Consulte os veículos utilizados pelos funcionários.</p>
 
+    <!-- Mensagens -->
     <div th:if="${mensagem}"
          class="alert alert-success"
          th:text="${mensagem}">
@@ -28,14 +29,18 @@
          th:text="${erro}">
     </div>
 
+    <!-- Nova saída -->
     <a th:href="@{/utilizacoes/novo}"
        class="btn btn-primary mb-3">
         <i class="bi bi-plus-circle"></i>
         Registrar nova saída
     </a>
 
+    <!-- Histórico -->
     <div class="table-responsive">
+
         <table class="table table-striped align-middle">
+
             <thead>
                 <tr>
                     <th>Funcionário</th>
@@ -48,21 +53,30 @@
             </thead>
 
             <tbody>
-                <tr th:each="uso : ${utilizacoes}">
-                    <td th:text="${uso.funcionario.nome}"></td>
 
-                    <td th:text="${uso.veiculo.modelo}"></td>
+                <tr th:each="uso : ${utilizacoes}">
+
+                    <td th:text="${uso.funcionario.nome}">
+                        Funcionário
+                    </td>
+
+                    <td th:text="${uso.veiculo.modelo}">
+                        Veículo
+                    </td>
 
                     <td th:text="${#temporals.format(
                         uso.dataHoraSaida, 'dd/MM/yyyy HH:mm')}">
+                        Saída
                     </td>
 
                     <td th:text="${uso.dataHoraRetorno != null ?
                         #temporals.format(
                         uso.dataHoraRetorno, 'dd/MM/yyyy HH:mm')
                         : '-'}">
+                        Retorno
                     </td>
 
+                    <!-- Situação -->
                     <td>
                         <span th:if="${uso.status != null}"
                               class="badge"
@@ -72,39 +86,82 @@
                         </span>
                     </td>
 
+                    <!-- Ações -->
                     <td>
-                        <form th:if="${uso.status != null
-                                      and uso.status.name() == 'EM_UTILIZACAO'}"
-                              th:action="@{/utilizacoes/{id}/devolver(id=${uso.id})}"
-                              method="post">
 
-                            <button type="submit"
-                                    class="btn btn-success btn-sm">
-                                <i class="bi bi-arrow-return-left"></i>
-                                Devolver
-                            </button>
-                        </form>
+                        <div class="d-flex gap-2 align-items-center">
 
-                        <span th:if="${uso.status != null
-                                      and uso.status.name() == 'DEVOLVIDO'}"
-                              class="text-muted">
-                            Finalizado
-                        </span>
+                            <!-- Devolver -->
+                            <form th:if="${uso.status != null
+                                          and uso.status.name() == 'EM_UTILIZACAO'}"
+                                  th:action="@{/utilizacoes/{id}/devolver(id=${uso.id})}"
+                                  method="post">
+
+                                <button type="submit"
+                                        class="btn btn-success btn-sm">
+
+                                    <i class="bi bi-arrow-return-left"></i>
+                                    Devolver
+
+                                </button>
+
+                            </form>
+
+                            <!-- Excluir: somente ADMIN -->
+                            <form sec:authorize="hasRole('ADMIN')"
+                                  th:if="${uso.status != null
+                                          and uso.status.name() == 'EM_UTILIZACAO'}"
+                                  th:action="@{/utilizacoes/{id}/excluir(id=${uso.id})}"
+                                  method="post"
+                                  onsubmit="return confirm('Deseja realmente excluir esta utilização? Esta ação não poderá ser desfeita.');">
+
+                                <button type="submit"
+                                        class="btn btn-outline-danger btn-sm">
+
+                                    <i class="bi bi-trash"></i>
+                                    Excluir
+
+                                </button>
+
+                            </form>
+
+                            <!-- Utilização finalizada -->
+                            <span th:if="${uso.status != null
+                                          and uso.status.name() == 'DEVOLVIDO'}"
+                                  class="text-muted">
+                                Finalizado
+                            </span>
+
+                        </div>
+
                     </td>
+
                 </tr>
 
+                <!-- Sem registros -->
                 <tr th:if="${#lists.isEmpty(utilizacoes)}">
-                    <td colspan="6" class="text-center">
+
+                    <td colspan="6"
+                        class="text-center text-muted">
+
                         Nenhuma utilização registrada.
+
                     </td>
+
                 </tr>
+
             </tbody>
+
         </table>
+
     </div>
 
+    <!-- Voltar -->
     <a th:href="@{/}" class="btn btn-secondary">
+
         <i class="bi bi-arrow-left"></i>
         Voltar ao início
+
     </a>
 
 </main>
