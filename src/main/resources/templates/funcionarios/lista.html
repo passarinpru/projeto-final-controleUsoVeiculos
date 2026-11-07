@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR"
       xmlns:th="http://www.thymeleaf.org"
@@ -19,21 +20,39 @@
         <a th:href="@{/funcionarios/novo}"
            class="btn btn-app"
            sec:authorize="hasRole('ADMIN')">
+
             <i class="bi bi-plus-lg"></i>
             Novo funcionário
+
         </a>
 
     </div>
 
     <!-- Mensagem de sucesso -->
-    <div th:if="${mensagem}" class="alert alert-success">
+    <div th:if="${mensagem}"
+         class="alert alert-success"
+         role="alert">
+
         <span th:text="${mensagem}"></span>
+
+    </div>
+
+    <!-- Mensagem de erro -->
+    <div th:if="${erro}"
+         class="alert alert-danger"
+         role="alert">
+
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${erro}"></span>
+
     </div>
 
     <!-- Mensagem quando não existem funcionários -->
     <div th:if="${#lists.isEmpty(funcionarios)}"
          class="alert alert-info">
+
         Nenhum funcionário encontrado.
+
     </div>
 
     <!-- Tabela de funcionários -->
@@ -45,6 +64,7 @@
             <table class="table table-hover mb-0 align-middle">
 
                 <thead class="table-light">
+
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
@@ -53,9 +73,12 @@
                         <!-- Coluna visível somente para ADMIN -->
                         <th class="text-end"
                             sec:authorize="hasRole('ADMIN')">
+
                             Ações
+
                         </th>
                     </tr>
+
                 </thead>
 
                 <tbody>

@@ -897,8 +897,8 @@ Os itens `[ ]` permanecem pendentes ou não foram executados.
 - [x] README com documentação dos testes.
 - [x] Capturas de tela adicionadas à pasta docs.
 - [x] Tag `base-essencial` criada e enviada ao GitHub.
-- [ ] Conferir se todas as imagens aparecem corretamente no README publicado.
-- [ ] Atualizar e conferir o Kanban no GitHub Projects.
+- [x] Conferir se todas as imagens aparecem corretamente no README publicado.
+- [x] Atualizar e conferir o Kanban no GitHub Projects.
 - [ ] Realizar revisão de usabilidade por um colega (atividade não realizada).
 
 ---
