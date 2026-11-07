@@ -865,7 +865,9 @@ Os itens `[ ]` permanecem pendentes ou não foram executados.
 - [x] RN03: impedir duas utilizações em aberto para o mesmo veículo.
 - [x] Exclusão administrativa de utilização em aberto.
 - [x] Impedir exclusão de utilização finalizada, conforme validação implementada no Service.
-- [ ] Confirmar manualmente todas as restrições de exclusão de registros vinculados.
+- [x] Impedir a exclusão de funcionários com histórico de utilização de veículos.
+- [ ] Verificar a proteção contra exclusão de veículos com histórico de utilização.
+
 
 ## 16.3 Segurança
 
