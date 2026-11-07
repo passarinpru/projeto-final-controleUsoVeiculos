@@ -1,37 +1,114 @@
+
 <!DOCTYPE html>
-<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{fragments/layout :: head('Entrar')}"></head>
+
 <body class="bg-light">
 
 <main class="container">
-    <div class="row justify-content-center" style="min-height: 90vh; align-items: center;">
-        <div class="col-sm-8 col-md-5 col-lg-4">
-            <div class="card shadow-sm">
+
+    <div class="row justify-content-center"
+         style="min-height: 90vh; align-items: center;">
+
+        <div class="col-sm-9 col-md-7 col-lg-5">
+
+            <div class="card shadow-sm border-0">
+
                 <div class="card-body p-4">
-                    <h1 class="h5 mb-1" th:text="${appNome}">Meu Sistema</h1>
-                    <p class="text-muted small mb-4">Informe seu usuário e senha para continuar.</p>
 
-                    <!-- Mensagens: ?error (login inválido) e ?saiu (logout) -->
-                    <div th:if="${param.error}" class="alert alert-danger py-2 small">Usuário ou senha inválidos.</div>
-                    <div th:if="${param.saiu}" class="alert alert-success py-2 small">Você saiu do sistema.</div>
+                    <!-- Logo da empresa -->
+                    <div class="text-center mb-4">
 
-                    <!-- O Spring Security recebe este formulário em POST /login.
-                         Os nomes dos campos precisam ser "username" e "password". -->
+                        <img th:src="@{/img/logo.png}"
+                             src="/img/logo.png"
+                             alt="Turbinas União"
+                             class="img-fluid rounded"
+                             style="width: 100%; max-width: 380px; height: auto;">
+
+                    </div>
+
+                    <!-- Nome do sistema -->
+                    <h1 class="h5 text-center mb-1"
+                        th:text="${appNome}">
+                        Controle de Veículos
+                    </h1>
+
+                    <p class="text-muted small text-center mb-4">
+                        Informe seu usuário e senha para continuar.
+                    </p>
+
+                    <!-- Mensagens de login -->
+                    <div th:if="${param.error}"
+                         class="alert alert-danger py-2 small">
+                        Usuário ou senha inválidos.
+                    </div>
+
+                    <div th:if="${param.saiu}"
+                         class="alert alert-success py-2 small">
+                        Você saiu do sistema.
+                    </div>
+
+                    <!-- Formulário de autenticação -->
                     <form th:action="@{/login}" method="post">
+
                         <div class="mb-3">
-                            <label for="username" class="form-label">Usuário</label>
-                            <input type="text" id="username" name="username" class="form-control" autofocus required>
+
+                            <label for="username"
+                                   class="form-label">
+                                Usuário
+                            </label>
+
+                            <input type="text"
+                                   id="username"
+                                   name="username"
+                                   class="form-control"
+                                   autocomplete="username"
+                                   autofocus
+                                   required>
+
                         </div>
+
                         <div class="mb-3">
-                            <label for="password" class="form-label">Senha</label>
-                            <input type="password" id="password" name="password" class="form-control" required>
+
+                            <label for="password"
+                                   class="form-label">
+                                Senha
+                            </label>
+
+                            <input type="password"
+                                   id="password"
+                                   name="password"
+                                   class="form-control"
+                                   autocomplete="current-password"
+                                   required>
+
                         </div>
-                        <button type="submit" class="btn btn-app w-100">Entrar</button>
+
+                        <button type="submit"
+                                class="btn btn-app w-100">
+                            Entrar
+                        </button>
+
                     </form>
+
+                    <!-- Identificação do projeto -->
+                    <p class="text-muted text-center small mt-4 mb-0">
+                        Sistema de Controle de Veículos
+                        <span class="d-block">
+                            Turbinas União
+                        </span>
+                    </p>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 </main>
 
 </body>
