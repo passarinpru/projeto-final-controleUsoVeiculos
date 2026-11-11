@@ -14,7 +14,7 @@ O projeto contempla cadastros, regras de negócio, autenticação, autorização
 | Aluno | Vitor Emanuel de Lima Vodinciar |
 | Turma | TEC-N-001788/2026 |
 | Opção escolhida | Proposta própria |
-| Versão atual | 0.4.1 |
+| Versão atual | 1.0.0 |
 | Previsão de entrega da versão 1.0 | 11/11/2026 |
 | Ambiente de desenvolvimento | GitHub Codespaces |
 | Linguagem | Java 21 |
@@ -740,9 +740,10 @@ O desenvolvimento foi acompanhado por testes manuais no ambiente GitHub Codespac
 | 0.2.0 | 21/10/2026 | Cadastros, registro de utilizações, devoluções e regras de negócio. |
 | 0.3.0 | 01/11/2026 | Login, perfis de acesso, página 403 e controle visual de permissões. |
 | 0.4.0 | 04/11/2026 | Painel de indicadores, Lista de Atenção e testes de atualização após devoluções. |
-| 0.4.1 | 04/11/2026 | Exclusão administrativa de utilizações em aberto, teste da RN02, validação da interface por perfil e atualização da documentação. |
+| 0.4.1 | 04/11/2026 | Exclusão administrativa de utilizações em aberto, teste da RN02, validação da interface por perfil e atualização da documentação.
+| 1.0.0 | 11/11/2026 | Primeira versão estável do Controle de Veículos |
 
----
+---git add README.md
 
 # 13. Próximas etapas
 
